@@ -7,6 +7,7 @@
 - Student: VOORNAAM NAAM
 - Studentennummer: xxxxxxxxx
 - E-mailadres: <mailto:voornaam.naam@student.hogent.be>
+- Demo: <DEMO_LINK_HIER>
 - GitHub-repository: <GITHUB_REPO_LINK_HIER>
 - Front-end Web Development
   - Online versie: <LINK_ONLINE_VERSIE_HIER>
