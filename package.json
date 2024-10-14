@@ -1,0 +1,31 @@
+{
+  "name": "frontendweb-2425-sdevuyst",
+  "version": "1.0.0",
+  "description": "application for the course Web Services.",
+  "main": "index.ts",
+  "repository": "git@github.com:HOGENT-frontendweb/frontendweb-2425-SDeVuyst.git",
+  "license": "MIT",
+  "private": true,
+  "packageManager": "yarn@4.5.0",
+  "scripts": {
+    "start:dev": "tsx watch --env-file .env --inspect=0.0.0.0:9001 src/index.ts",
+    "build": "tsc",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "config": "^3.3.12",
+    "koa": "^2.15.3",
+    "winston": "^3.15.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.12.0",
+    "@stylistic/eslint-plugin": "^2.9.0",
+    "@types/config": "^3.3.5",
+    "@types/koa": "^2.15.0",
+    "@types/node": "^22.7.5",
+    "eslint": "^9.12.0",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.8.1"
+  }
+}

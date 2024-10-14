@@ -4,13 +4,11 @@
 > Lees <https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet> om te weten hoe een Markdown-bestand opgemaakt moet worden.
 > Verwijder alle instructies (lijnen die starten met >).
 
-- Student: VOORNAAM NAAM
-- Studentennummer: xxxxxxxxx
-- E-mailadres: <mailto:voornaam.naam@student.hogent.be>
+- Student: Silas De Vuyst
+- Studentennummer: 202399688
+- E-mailadres: <mailto:silas.devuyst@student.hogent.be>
 - Demo: <DEMO_LINK_HIER>
-- GitHub-repository: <GITHUB_REPO_LINK_HIER>
-- Front-end Web Development
-  - Online versie: <LINK_ONLINE_VERSIE_HIER>
+- GitHub-repository: <https://github.com/HOGENT-frontendweb/frontendweb-2425-SDeVuyst>
 - Web Services:
   - Online versie: <LINK_ONLINE_VERSIE_HIER>
 
@@ -39,56 +37,41 @@
 
 ## API calls
 
-> Maak hier een oplijsting van alle API cals in jouw applicatie. Groepeer dit per entiteit. Hieronder een voorbeeld.
-> Dit is weinig zinvol indien je enkel Front-end Web Development volgt, verwijder dan deze sectie.
-> Indien je als extra Swagger koos, dan voeg je hier een link toe naar jouw online documentatie. Swagger geeft nl. exact (en nog veel meer) wat je hieronder moet schrijven.
+# TODO: ERD
 
-### Gebruikers
+### Driver
+- `GET /api/drivers`: alle drivers ophalen
+- `GET /api/drivers/:id`: driver met een bepaald id ophalen
+- `GET /api/drivers/:id/results`: De resultaten van een driver met een bepaald id ophalen
+- `POST /api/drivers`: een nieuwe driver aanmaken
+- `PUT /api/drivers/:id`: een driver aanpassen
+- `DELETE /api/drivers/:id`: een driver met een bepaald id verwijderen
 
-- `GET /api/users`: alle gebruikers ophalen
-- `GET /api/users/:id`: gebruiker met een bepaald id ophalen
+### Circuit
+- `GET /api/circuits`: alle circuits ophalen
+- `GET /api/circuits/:id`: circuit met een bepaald id ophalen
+- `POST /api/circuits`: een nieuw circuit aanmaken
+- `PUT /api/circuits/:id`: een circuit aanpassen
+- `DELETE /api/circuits/:id`: een circuit met een bepaald id verwijderen
 
+### Race
+- `GET /api/races`: alle races ophalen
+- `GET /api/races/:id`: races met een bepaald id ophalen
+- `GET /api/races/:id/results`: De resultaten van een race met een bepaald id ophalen
+- `POST /api/races`: een nieuwe race aanmaken
+- `PUT /api/races/:id`: een race aanpassen
+- `DELETE /api/races/:id`: een race met een bepaald id verwijderen
+  
+### Result
+- `GET /api/results`: alle results ophalen
+- `GET /api/results/:id`: result met een bepaald id ophalen
+- `POST /api/results`: een nieuwe result aanmaken
+- `PUT /api/results/:id`: een result aanpassen
+- `DELETE /api/results/:id`: een result met een bepaald id verwijderen
+  
 ## Behaalde minimumvereisten
 
 > Duid per vak aan welke minimumvereisten je denkt behaald te hebben
-
-### Front-end Web Development
-
-#### Componenten
-
-- [ ] heeft meerdere componenten - dom & slim (naast login/register)
-- [ ] applicatie is voldoende complex
-- [ ] definieert constanten (variabelen, functies en componenten) buiten de component
-- [ ] minstens één form met meerdere velden met validatie (naast login/register)
-- [ ] login systeem
-
-#### Routing
-
-- [ ] heeft minstens 2 pagina's (naast login/register)
-- [ ] routes worden afgeschermd met authenticatie en autorisatie
-
-#### State management
-
-- [ ] meerdere API calls (naast login/register)
-- [ ] degelijke foutmeldingen indien API-call faalt
-- [ ] gebruikt useState enkel voor lokale state
-- [ ] gebruikt gepast state management voor globale state - indien van toepassing
-
-#### Hooks
-
-- [ ] gebruikt de hooks op de juiste manier
-
-#### Algemeen
-
-- [ ] een aantal niet-triviale én werkende e2e testen
-- [ ] minstens één extra technologie
-- [ ] node_modules, .env, productiecredentials... werden niet gepushed op GitHub
-- [ ] maakt gebruik van de laatste ES-features (async/await, object destructuring, spread operator...)
-- [ ] de applicatie start zonder problemen op gebruikmakend van de instructies in de README
-- [ ] de applicatie draait online
-- [ ] duidelijke en volledige README.md
-- [ ] er werden voldoende (kleine) commits gemaakt
-- [ ] volledig en tijdig ingediend dossier
 
 ### Web Services
 
@@ -137,29 +120,17 @@
 
 ## Projectstructuur
 
-### Front-end Web Development
-
-> Hoe heb je jouw applicatie gestructureerd (mappen, design patterns, hiërarchie van componenten, state...)?
-
 ### Web Services
 
 > Hoe heb je jouw applicatie gestructureerd (mappen, design patterns...)?
 
 ## Extra technologie
 
-### Front-end Web Development
-
-> Wat is de extra technologie? Hoe werkt het? Voeg een link naar het npm package toe!
-
 ### Web Services
 
 > Wat is de extra technologie? Hoe werkt het? Voeg een link naar het npm package toe!
 
 ## Gekende bugs
-
-### Front-end Web Development
-
-> Zijn er gekende bugs?
 
 ### Web Services
 

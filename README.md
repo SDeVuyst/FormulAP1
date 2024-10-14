@@ -1,10 +1,8 @@
-# Examenopdracht Front-end Web Development & Web Services
+# Examenopdracht Web Services
 
-> Schrap hierboven eventueel wat niet past
-
-- Student: VOORNAAM NAAM
-- Studentennummer: xxxxxxxxx
-- E-mailadres: <mailto:voornaam.naam@student.hogent.be>
+- Student: Silas De Vuyst
+- Studentennummer: 202399688
+- E-mailadres: <mailto:silas.devuyst@student.hogent.be>
 
 ## Vereisten
 
