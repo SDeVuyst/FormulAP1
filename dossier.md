@@ -37,7 +37,7 @@
 
 ## API calls
 
-# TODO: ERD
+![ERD](<images/erd.png>)
 
 ### Driver
 - `GET /api/drivers`: alle drivers ophalen
@@ -50,6 +50,7 @@
 ### Circuit
 - `GET /api/circuits`: alle circuits ophalen
 - `GET /api/circuits/:id`: circuit met een bepaald id ophalen
+- `GET /api/circuits/:id/races`: races op een circuit met een bepaald id ophalen
 - `POST /api/circuits`: een nieuw circuit aanmaken
 - `PUT /api/circuits/:id`: een circuit aanpassen
 - `DELETE /api/circuits/:id`: een circuit met een bepaald id verwijderen
