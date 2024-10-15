@@ -1,5 +1,6 @@
 import Router from '@koa/router';
 import * as circuitService from '../service/circuit';
+import * as raceService from '../service/race';
 import type { Context } from 'koa';
 
 const getAllCircuits = async (ctx: Context) => {
@@ -34,6 +35,15 @@ const deleteCircuit = async (ctx: Context) => {
   ctx.status = 204;
 };
 
+const getRacesByCircuitId = async(ctx: Context) => {
+  const races = await raceService.getRacesByCircuitId(
+    Number(ctx.params.id),
+  );
+  ctx.body = {
+    items: races,
+  };
+};
+
 export default (parent: Router) => {
   const router = new Router({
     prefix: '/circuits',
@@ -44,6 +54,7 @@ export default (parent: Router) => {
   router.get('/:id', getCircuitById);
   router.put('/:id', updateCircuit);
   router.delete('/:id', deleteCircuit);
+  router.get('/:id/races', getRacesByCircuitId);
 
   parent.use(router.routes()).use(router.allowedMethods());
 };

@@ -1,15 +1,16 @@
 import Router from '@koa/router';
-import * as RaceService from '../service/race';
+import * as raceService from '../service/race';
+import * as resultService from '../service/result';
 import type { Context } from 'koa';
 
 const getAllRaces = async (ctx: Context) => {
   ctx.body = {
-    items: RaceService.getAll(),
+    items: raceService.getAll(),
   };
 };
 
 const createRace = async (ctx: Context) => {
-  const newTransaction = RaceService.create({
+  const newTransaction = raceService.create({
     ...ctx.request.body,
     placeId: Number(ctx.request.body.placeId),
     date: new Date(ctx.request.body.date),
@@ -18,11 +19,11 @@ const createRace = async (ctx: Context) => {
 };
 
 const getRaceById = async (ctx: Context) => {
-  ctx.body = RaceService.getById(Number(ctx.params.id));
+  ctx.body = raceService.getById(Number(ctx.params.id));
 };
 
 const updateRace = async (ctx: Context) => {
-  ctx.body = RaceService.updateById(Number(ctx.params.id), {
+  ctx.body = raceService.updateById(Number(ctx.params.id), {
     ...ctx.request.body,
     placeId: Number(ctx.request.body.placeId),
     date: new Date(ctx.request.body.date),
@@ -30,8 +31,17 @@ const updateRace = async (ctx: Context) => {
 };
 
 const deleteRace = async (ctx: Context) => {
-  RaceService.deleteById(Number(ctx.params.id));
+  raceService.deleteById(Number(ctx.params.id));
   ctx.status = 204;
+};
+
+const getResultsByRaceId = async(ctx: Context) => {
+  const results = await resultService.getResultsByRaceId(
+    Number(ctx.params.id),
+  );
+  ctx.body = {
+    items: results,
+  };
 };
 
 export default (parent: Router) => {
@@ -44,6 +54,7 @@ export default (parent: Router) => {
   router.get('/:id', getRaceById);
   router.put('/:id', updateRace);
   router.delete('/:id', deleteRace);
+  router.get('/:id/results', getResultsByRaceId);
 
   parent.use(router.routes()).use(router.allowedMethods());
 };

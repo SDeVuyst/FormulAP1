@@ -1,5 +1,6 @@
 import Router from '@koa/router';
 import * as driverService from '../service/driver';
+import * as resultService from '../service/result';
 import type { Context } from 'koa';
 
 const getAllDrivers = async (ctx: Context) => {
@@ -34,6 +35,15 @@ const deleteDriver = async (ctx: Context) => {
   ctx.status = 204;
 };
 
+const getResultsByDriverId = async(ctx: Context) => {
+  const results = await resultService.getResultsByDriverId(
+    Number(ctx.params.id),
+  );
+  ctx.body = {
+    items: results,
+  };
+};
+
 export default (parent: Router) => {
   const router = new Router({
     prefix: '/drivers',
@@ -44,6 +54,7 @@ export default (parent: Router) => {
   router.get('/:id', getDriverById);
   router.put('/:id', updateDriver);
   router.delete('/:id', deleteDriver);
+  router.get('/:id/results', getResultsByDriverId);
 
   parent.use(router.routes()).use(router.allowedMethods());
 };

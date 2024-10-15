@@ -9,13 +9,13 @@ export const getById = (id: number) => {
   return RACES.find((r) => r.id === id);
 };
 
-export const create = ({ date, laps, circuit_id }: any) => {
+export const create = ({ date, laps, circuit }: any) => {
 
   const maxId = Math.max(...RACES.map((i) => i.id));
 
   const newRace = {
     id: maxId + 1,
-    date, laps, circuit_id,
+    date, laps, circuit,
   };
 
   RACES.push(newRace);
@@ -24,7 +24,7 @@ export const create = ({ date, laps, circuit_id }: any) => {
 
 export const updateById = (
   id: number,
-  { date, laps, circuit_id }: any,
+  { date, laps, circuit }: any,
 ) => {
   // todo
   throw new Error('Not implemented yet!');
@@ -33,4 +33,8 @@ export const updateById = (
 export const deleteById = (id: number) => {
   // todo
   throw new Error('Not implemented yet!');
+};
+
+export const getRacesByCircuitId = async (circuitId: number) => {
+  return RACES.filter((r) => r.circuit.id === circuitId);
 };

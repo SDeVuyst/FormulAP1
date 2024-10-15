@@ -15,7 +15,13 @@ export const RACES = [
     id: 1,
     date: '2021-05-08T00:00:00.000Z',
     laps: 56,
-    circuit_id: 1,
+    circuit: {
+      id: 1,
+      name: 'Circuit of The Americas',
+      city: 'Austin',
+      country: 'USA',
+      active: true,
+    },
   },
 ];
 
@@ -25,8 +31,24 @@ export const RESULTS = [
     position: 1,
     points: 25,
     status: 'FIN',
-    race_id: 1,
-    driver_id: 1,
+    race: {
+      id: 1,
+      date: '2021-05-08T00:00:00.000Z',
+      laps: 56,
+      circuit: {
+        id: 1,
+        name: 'Circuit of The Americas',
+        city: 'Austin',
+        country: 'USA',
+        active: true,
+      },
+    },
+    driver: {
+      id: 1,
+      first_name: 'Lewis',
+      last_name: 'Hamilton',
+      status: 'Active',    
+    },
   },
 ];
 
