@@ -5,6 +5,7 @@ import installCircuitRouter from './circuit';
 import installRaceRouter from './race';
 import installResultRouter from './result';
 import installDriverRouter from './driver';
+import installHealthRouter from './health';
 
 export default (app: Application) => {
   const router = new Router({
@@ -15,6 +16,7 @@ export default (app: Application) => {
   installRaceRouter(router);
   installResultRouter(router);
   installDriverRouter(router);
+  installHealthRouter(router);
 
   app.use(router.routes()).use(router.allowedMethods());
 };
