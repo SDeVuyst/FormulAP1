@@ -1,4 +1,4 @@
-import type { Entity } from './common';
+import type { Entity, ListResponse } from './common';
 
 export interface Circuit extends Entity {
   name: string;
@@ -15,3 +15,11 @@ export interface CircuitCreateInput {
 }
 
 export interface CircuitUpdateInput extends CircuitCreateInput {}
+
+export interface CreateCircuitRequest extends CircuitCreateInput {}
+export interface UpdateCircuitRequest extends CircuitUpdateInput {}
+
+export interface GetAllCircuitsResponse extends ListResponse<Circuit> {}
+export interface GetCircuitByIdResponse extends Circuit {}
+export interface CreateCircuitResponse extends GetCircuitByIdResponse {}
+export interface UpdateCircuitResponse extends GetCircuitByIdResponse {}

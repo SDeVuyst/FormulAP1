@@ -1,43 +1,47 @@
 import Router from '@koa/router';
 import * as resultService from '../service/result';
-import type { Context } from 'koa';
+import type { FormulaAppContext, FormulaAppState, KoaContext, KoaRouter } from '../types/koa';
+import type { 
+  CreateResultRequest, 
+  CreateResultResponse, 
+  GetAllResultsResponse, 
+  GetResultByIdResponse, 
+  UpdateResultRequest, 
+  UpdateResultResponse,
+} from '../types/result';
+import type { IdParams } from '../types/common';
 
-const getAllResults = async (ctx: Context) => {
+const getAllResults = async (ctx: KoaContext<GetAllResultsResponse>) => {
   const results = await resultService.getAll();
   ctx.body = {
     items: results,
   };
 };
 
-const createResult = async (ctx: Context) => {
-  const newTransaction = await resultService.create({
-    ...ctx.request.body,
-    placeId: Number(ctx.request.body.placeId),
-    date: new Date(ctx.request.body.date),
-  });
-  ctx.body = newTransaction;
+const createResult = async (ctx: KoaContext<CreateResultResponse, void, CreateResultRequest>) => {
+  const newResult = await resultService.create(ctx.request.body);
+  ctx.status = 201;
+  ctx.body = newResult;
 };
 
-const getResultById = async (ctx: Context) => {
+const getResultById = async (ctx: KoaContext<GetResultByIdResponse, IdParams>) => {
   const result = await resultService.getById(Number(ctx.params.id));
   ctx.body = result;
 };
 
-const updateResult = async (ctx: Context) => {
-  ctx.body = await resultService.updateById(Number(ctx.params.id), {
-    ...ctx.request.body,
-    placeId: Number(ctx.request.body.placeId),
-    date: new Date(ctx.request.body.date),
-  });
+const updateResult = async (
+  ctx: KoaContext<UpdateResultResponse, IdParams, UpdateResultRequest>,
+) => {
+  ctx.body = await resultService.updateById(ctx.params.id, ctx.request.body);
 };
 
-const deleteResult = async (ctx: Context) => {
+const deleteResult = async (ctx: KoaContext<void, IdParams>) => {
   await resultService.deleteById(Number(ctx.params.id));
   ctx.status = 204;
 };
 
-export default (parent: Router) => {
-  const router = new Router({
+export default (parent: KoaRouter) => {
+  const router = new Router<FormulaAppState, FormulaAppContext>({
     prefix: '/results',
   });
 

@@ -1,4 +1,4 @@
-import type { Entity } from './common';
+import type { Entity, ListResponse } from './common';
 
 export interface Driver extends Entity {
   first_name: string;
@@ -13,3 +13,11 @@ export interface DriverCreateInput {
 }
 
 export interface DriverUpdateInput extends DriverCreateInput {}
+
+export interface CreateDriverRequest extends DriverCreateInput {}
+export interface UpdateDriverRequest extends DriverUpdateInput {}
+
+export interface GetAllDriversResponse extends ListResponse<Driver> {}
+export interface GetDriverByIdResponse extends Driver {}
+export interface CreateDriverResponse extends GetDriverByIdResponse {}
+export interface UpdateDriverResponse extends GetDriverByIdResponse {}

@@ -3,10 +3,11 @@ import bodyParser from 'koa-bodyparser';
 import { getLogger } from './core/logging';
 import { initializeData } from './data';
 import installRest from './rest';
+import type { FormulaAppContext, FormulaAppState } from './types/koa';
 
 async function main(): Promise<void> {
 
-  const app = new Koa();
+  const app = new Koa<FormulaAppState, FormulaAppContext>();
 
   app.use(bodyParser());
 

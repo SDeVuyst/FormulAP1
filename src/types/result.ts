@@ -1,4 +1,4 @@
-import type { Entity } from './common';
+import type { Entity, ListResponse } from './common';
 import type { Race } from './race';
 import type { Driver } from './driver';
 
@@ -19,3 +19,11 @@ export interface ResultCreateInput {
 }
 
 export interface ResultUpdateInput extends ResultCreateInput {}
+
+export interface CreateResultRequest extends ResultCreateInput {}
+export interface UpdateResultRequest extends ResultUpdateInput {}
+
+export interface GetAllResultsResponse extends ListResponse<Result> {}
+export interface GetResultByIdResponse extends Result {}
+export interface CreateResultResponse extends GetResultByIdResponse {}
+export interface UpdateResultResponse extends GetResultByIdResponse {}

@@ -1,43 +1,50 @@
 import Router from '@koa/router';
 import * as circuitService from '../service/circuit';
 import * as raceService from '../service/race';
-import type { Context } from 'koa';
+import type { FormulaAppContext, FormulaAppState, KoaContext, KoaRouter } from '../types/koa';
+import type { 
+  CreateCircuitRequest, 
+  CreateCircuitResponse, 
+  GetAllCircuitsResponse, 
+  GetCircuitByIdResponse,
+  UpdateCircuitRequest,
+  UpdateCircuitResponse,
+} from '../types/circuit';
+import type {
+  GetAllRacesResponse,
+} from '../types/race';
+import type { IdParams } from '../types/common';
 
-const getAllCircuits = async (ctx: Context) => {
+const getAllCircuits = async (ctx: KoaContext<GetAllCircuitsResponse>) => {
   const circuits = await circuitService.getAll();
   ctx.body = {
     items: circuits,
   };
 };
 
-const createCircuit = async (ctx: Context) => {
-  const newTransaction = await circuitService.create({
-    ...ctx.request.body,
-    placeId: Number(ctx.request.body.placeId),
-    date: new Date(ctx.request.body.date),
-  });
-  ctx.body = newTransaction;
+const createCircuit = async (ctx: KoaContext<CreateCircuitResponse, void, CreateCircuitRequest>) => {
+  const newCircuit = await circuitService.create(ctx.request.body);
+  ctx.status = 201;
+  ctx.body = newCircuit;
 };
 
-const getCircuitById = async (ctx: Context) => {
+const getCircuitById = async (ctx: KoaContext<GetCircuitByIdResponse, IdParams>) => {
   const circuit = await circuitService.getById(Number(ctx.params.id));
   ctx.body = circuit;
 };
 
-const updateCircuit = async (ctx: Context) => {
-  ctx.body = await circuitService.updateById(Number(ctx.params.id), {
-    ...ctx.request.body,
-    placeId: Number(ctx.request.body.placeId),
-    date: new Date(ctx.request.body.date),
-  });
+const updateCircuit = async (
+  ctx: KoaContext<UpdateCircuitResponse, IdParams, UpdateCircuitRequest>,
+) => {
+  ctx.body = await circuitService.updateById(ctx.params.id, ctx.request.body);
 };
 
-const deleteCircuit = async (ctx: Context) => {
+const deleteCircuit = async (ctx: KoaContext<void, IdParams>) => {
   await circuitService.deleteById(Number(ctx.params.id));
   ctx.status = 204;
 };
 
-const getRacesByCircuitId = async(ctx: Context) => {
+const getRacesByCircuitId = async(ctx: KoaContext<GetAllRacesResponse, IdParams>) => {
   const races = await raceService.getRacesByCircuitId(
     Number(ctx.params.id),
   );
@@ -46,8 +53,8 @@ const getRacesByCircuitId = async(ctx: Context) => {
   };
 };
 
-export default (parent: Router) => {
-  const router = new Router({
+export default (parent: KoaRouter) => {
+  const router = new Router<FormulaAppState, FormulaAppContext>({
     prefix: '/circuits',
   });
 

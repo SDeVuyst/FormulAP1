@@ -1,5 +1,5 @@
 import type { Circuit } from './circuit';
-import type { Entity } from './common';
+import type { Entity, ListResponse } from './common';
 
 export interface Race extends Entity {
   date: Date;
@@ -14,3 +14,11 @@ export interface RaceCreateInput {
 }
 
 export interface RaceUpdateInput extends RaceCreateInput {}
+
+export interface CreateRaceRequest extends RaceCreateInput {}
+export interface UpdateRaceRequest extends RaceUpdateInput {}
+
+export interface GetAllRacesResponse extends ListResponse<Race> {}
+export interface GetRaceByIdResponse extends Race {}
+export interface CreateRaceResponse extends GetRaceByIdResponse {}
+export interface UpdateRaceResponse extends GetRaceByIdResponse {}
