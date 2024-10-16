@@ -36,7 +36,7 @@ const getCircuitById = async (ctx: KoaContext<GetCircuitByIdResponse, IdParams>)
 const updateCircuit = async (
   ctx: KoaContext<UpdateCircuitResponse, IdParams, UpdateCircuitRequest>,
 ) => {
-  ctx.body = await circuitService.updateById(ctx.params.id, ctx.request.body);
+  ctx.body = await circuitService.updateById(Number(ctx.params.id), ctx.request.body);
 };
 
 const deleteCircuit = async (ctx: KoaContext<void, IdParams>) => {

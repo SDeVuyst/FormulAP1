@@ -34,7 +34,7 @@ const getDriverById = async (ctx: KoaContext<GetDriverByIdResponse, IdParams>) =
 const updateDriver = async (
   ctx: KoaContext<UpdateDriverResponse, IdParams, UpdateDriverRequest>,
 ) => {
-  ctx.body = await driverService.updateById(ctx.params.id, ctx.request.body);
+  ctx.body = await driverService.updateById(Number(ctx.params.id), ctx.request.body);
 };
 
 const deleteDriver = async (ctx: KoaContext<void, IdParams>) => {

@@ -34,7 +34,7 @@ const getRaceById = async (ctx: KoaContext<GetRaceByIdResponse, IdParams>) => {
 const updateRace = async (
   ctx: KoaContext<UpdateRaceResponse, IdParams, UpdateRaceRequest>,
 ) => {
-  ctx.body = await raceService.updateById(ctx.params.id, ctx.request.body);
+  ctx.body = await raceService.updateById(Number(ctx.params.id), ctx.request.body);
 };
 
 const deleteRace = async (ctx: KoaContext<void, IdParams>) => {

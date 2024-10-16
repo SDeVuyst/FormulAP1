@@ -32,7 +32,7 @@ const getResultById = async (ctx: KoaContext<GetResultByIdResponse, IdParams>) =
 const updateResult = async (
   ctx: KoaContext<UpdateResultResponse, IdParams, UpdateResultRequest>,
 ) => {
-  ctx.body = await resultService.updateById(ctx.params.id, ctx.request.body);
+  ctx.body = await resultService.updateById(Number(ctx.params.id), ctx.request.body);
 };
 
 const deleteResult = async (ctx: KoaContext<void, IdParams>) => {
