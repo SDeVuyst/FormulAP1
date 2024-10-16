@@ -12,24 +12,24 @@ Ik verwacht dat volgende software reeds geïnstalleerd is:
 - [Yarn](https://yarnpkg.com)
 - [MySQL Community Server](https://dev.mysql.com/downloads/mysql/)
 
-> Vul eventueel aan
-
-## Front-end
-
-## Opstarten
-
-> Schrijf hier hoe we de applicatie starten (.env bestanden aanmaken, commando's om uit te voeren...)
-
-## Testen
-
-> Schrijf hier hoe we de testen uitvoeren (.env bestanden aanmaken, commando's om uit te voeren...)
 
 ## Back-end
 
 ## Opstarten
+TODO aanvullen
 
-> Schrijf hier hoe we de applicatie starten (.env bestanden aanmaken, commando's om uit te voeren...)
+```shell
+yarn start:dev
+```
 
 ## Testen
 
-> Schrijf hier hoe we de testen uitvoeren (.env bestanden aanmaken, commando's om uit te voeren...)
+### databank schoon maken en herseeden
+1) Databank resetten
+    ```shell
+    yarn prisma db push --force-reset
+    ```
+2) Seed databank
+    ```shell
+    yarn prisma db seed
+    ```
