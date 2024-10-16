@@ -16,7 +16,7 @@ export const getAll = async (): Promise<Driver[]> => {
 };
 
 export const getById = async (id: number): Promise<Driver> => {
-  const driver = await prisma.circuit.findUnique({
+  const driver = await prisma.driver.findUnique({
     where: {
       id,
     },
