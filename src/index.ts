@@ -1,24 +1,22 @@
-import Koa from 'koa';
-import bodyParser from 'koa-bodyparser';
-import { getLogger } from './core/logging';
-import { initializeData } from './data';
-import installRest from './rest';
-import type { FormulaAppContext, FormulaAppState } from './types/koa';
+// src/index.ts
+import createServer from './createServer';
 
-async function main(): Promise<void> {
+async function main() {
+  try {
+    const server = await createServer();
+    await server.start();
 
-  const app = new Koa<FormulaAppState, FormulaAppContext>();
+    async function onClose() {
+      await server.stop();
+      process.exit(0);
+    }
 
-  app.use(bodyParser());
-
-  await initializeData();
-
-  installRest(app);
-
-  app.listen(9000, () => {
-    getLogger().info('🚀 Server listening on http://127.0.0.1:9000');
-  });
-
+    process.on('SIGTERM', onClose);
+    process.on('SIGQUIT', onClose);
+  } catch (error) {
+    console.log('\n', error);
+    process.exit(-1);
+  }
 }
 
 main();

@@ -20,7 +20,7 @@ const RESULT_SELECT = {
 };
 
 export const getAll = async (): Promise<Result[]> => {
-  return prisma.result.findMany({
+  return await prisma.result.findMany({
     select: RESULT_SELECT,
   });
 };
@@ -44,16 +44,16 @@ export const create = async ({
   position, 
   points, 
   status, 
-  raceId, 
-  driverId,
+  race_id, 
+  driver_id,
 }: ResultCreateInput): Promise<Result> => {
-  return prisma.result.create({
+  return await prisma.result.create({
     data: {
       position, 
       points, 
       status, 
-      race_id: raceId, 
-      driver_id: driverId,
+      race_id: race_id, 
+      driver_id: driver_id,
     },
     select: RESULT_SELECT,
   });
@@ -63,10 +63,10 @@ export const updateById = async ( id: number, {
   position, 
   points, 
   status, 
-  raceId, 
-  driverId,
+  race_id, 
+  driver_id,
 }: ResultUpdateInput): Promise<Result> => {
-  return prisma.result.update({
+  return await prisma.result.update({
     where: {
       id,
     },
@@ -74,8 +74,8 @@ export const updateById = async ( id: number, {
       position, 
       points, 
       status, 
-      race_id: raceId, 
-      driver_id: driverId,
+      race_id: race_id, 
+      driver_id: driver_id,
     },
     select: RESULT_SELECT,
   });
@@ -89,22 +89,22 @@ export const deleteById = async (id: number): Promise<void> => {
   });
 };
 
-export const getResultsByRaceId = async (raceId: number): Promise<Result[]> => {
-  return prisma.result.findMany({
+export const getResultsByRaceId = async (race_id: number): Promise<Result[]> => {
+  return await prisma.result.findMany({
     where: {
       AND: [
-        { race_id: raceId },
+        { race_id: race_id },
       ],
     },
     select: RESULT_SELECT,
   });
 };
 
-export const getResultsByDriverId = async (driverId: number): Promise<Result[]> => {
-  return prisma.result.findMany({
+export const getResultsByDriverId = async (driver_id: number): Promise<Result[]> => {
+  return await prisma.result.findMany({
     where: {
       AND: [
-        { driver_id: driverId },
+        { driver_id: driver_id },
       ],
     },
     select: RESULT_SELECT,

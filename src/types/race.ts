@@ -10,7 +10,7 @@ export interface Race extends Entity {
 export interface RaceCreateInput {
   date: Date;
   laps: number;
-  circuitId: number;
+  circuit_id: number;
 }
 
 export interface RaceUpdateInput extends RaceCreateInput {}

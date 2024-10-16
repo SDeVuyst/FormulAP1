@@ -14,8 +14,8 @@ export interface ResultCreateInput {
   position: number;
   points: number;
   status: string | null;
-  raceId: number;
-  driverId: number;
+  race_id: number;
+  driver_id: number;
 }
 
 export interface ResultUpdateInput extends ResultCreateInput {}

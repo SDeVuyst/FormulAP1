@@ -2,7 +2,6 @@
 import { prisma } from '../data';
 import type { Race, RaceCreateInput, RaceUpdateInput } from '../types/race';
 
-// TODO: maybe include result ids?
 const RACE_SELECT = {
   id: true,
   date: true,
@@ -16,7 +15,7 @@ const RACE_SELECT = {
 };
 
 export const getAll = async (): Promise<Race[]> => {
-  return prisma.race.findMany({
+  return await prisma.race.findMany({
     select: RACE_SELECT,
   });
 };
@@ -39,13 +38,13 @@ export const getById = async (id: number): Promise<Race> => {
 export const create = async ({ 
   date, 
   laps, 
-  circuitId,
+  circuit_id,
 }: RaceCreateInput): Promise<Race> => {
-  return prisma.race.create({
+  return await prisma.race.create({
     data: {
       date, 
       laps, 
-      circuit_id: circuitId,
+      circuit_id: circuit_id,
     },
     select: RACE_SELECT,
   });
@@ -54,16 +53,17 @@ export const create = async ({
 export const updateById = async (id: number, { 
   date, 
   laps, 
-  circuitId,
+  circuit_id,
 }: RaceUpdateInput): Promise<Race> => {
-  return prisma.race.update({
+  
+  return await prisma.race.update({
     where: {
       id,
     },
     data: {
       date,
       laps,
-      circuit_id: circuitId,
+      circuit_id: circuit_id,
     },
     select: RACE_SELECT,
   });
@@ -77,11 +77,11 @@ export const deleteById = async (id: number): Promise<void> => {
   });
 };
 
-export const getRacesByCircuitId = async (circuitId: number): Promise<Race[]> => {
-  return prisma.race.findMany({
+export const getRacesByCircuitId = async (circuit_id: number): Promise<Race[]> => {
+  return await prisma.race.findMany({
     where: {
       AND: [
-        { circuit_id: circuitId },
+        { circuit_id: circuit_id },
       ],
     },
     select: RACE_SELECT,

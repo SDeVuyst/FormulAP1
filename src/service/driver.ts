@@ -10,7 +10,7 @@ const DRIVER_SELECT = {
 };
 
 export const getAll = async (): Promise<Driver[]> => {
-  return prisma.driver.findMany({
+  return await prisma.driver.findMany({
     select: DRIVER_SELECT,
   });
 };
@@ -31,7 +31,7 @@ export const getById = async (id: number): Promise<Driver> => {
 };
 
 export const create = async (driver: DriverCreateInput): Promise<Driver> => {
-  return prisma.driver.create({
+  return await prisma.driver.create({
     data: driver,
   });
 };
@@ -40,7 +40,7 @@ export const updateById = async (
   id: number, 
   changes: DriverUpdateInput,
 ): Promise<Driver> => {
-  return prisma.driver.update({
+  return await prisma.driver.update({
     where: {
       id,
     },

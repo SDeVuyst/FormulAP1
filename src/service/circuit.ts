@@ -11,7 +11,7 @@ const CIRCUIT_SELECT = {
 };
 
 export const getAll = async (): Promise<Circuit[]> => {
-  return prisma.circuit.findMany({
+  return await prisma.circuit.findMany({
     select: CIRCUIT_SELECT,
   });
 };
@@ -32,7 +32,7 @@ export const getById = async (id: number): Promise<Circuit> => {
 };
 
 export const create = async (circuit: CircuitCreateInput): Promise<Circuit> => {
-  return prisma.circuit.create({
+  return await prisma.circuit.create({
     data: circuit,
   });
 };
@@ -41,7 +41,7 @@ export const updateById = async (
   id: number,
   changes: CircuitUpdateInput,
 ): Promise<Circuit> => {
-  return prisma.circuit.update({
+  return await prisma.circuit.update({
     where: {
       id,
     },
