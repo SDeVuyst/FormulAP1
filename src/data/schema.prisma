@@ -41,7 +41,7 @@ model Result {
   id            Int            @id @default(autoincrement()) @db.UnsignedInt
   position      Int            @db.UnsignedMediumInt()
   points        Int            @db.MediumInt()
-  status        String         @db.VarChar(255)
+  status        String?        @db.VarChar(255)
   race_id       Int            @db.UnsignedInt
   driver_id     Int            @db.UnsignedInt
   race          Race           @relation(fields: [race_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_result_race")
@@ -54,7 +54,7 @@ model Driver {
   id                Int          @id @default(autoincrement()) @db.UnsignedInt
   first_name        String       @db.VarChar(255)
   last_name         String       @db.VarChar(255)
-  status            String       @db.VarChar(255)
+  status            String?      @db.VarChar(255)
   results Result[]
 
 }

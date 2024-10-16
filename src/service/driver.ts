@@ -1,5 +1,6 @@
 // src/service/driver.ts
 import { prisma } from '../data';
+import type { Driver, DriverCreateInput, DriverUpdateInput } from '../types/driver';
 
 const DRIVER_SELECT = {
   id: true,
@@ -8,13 +9,13 @@ const DRIVER_SELECT = {
   status: true,
 };
 
-export const getAll = async () => {
+export const getAll = async (): Promise<Driver[]> => {
   return prisma.driver.findMany({
     select: DRIVER_SELECT,
   });
 };
 
-export const getById = async (id: number) => {
+export const getById = async (id: number): Promise<Driver> => {
   const driver = await prisma.circuit.findUnique({
     where: {
       id,
@@ -29,31 +30,26 @@ export const getById = async (id: number) => {
   return driver;
 };
 
-export const create = async ({ first_name, last_name, status }: any) => {
+export const create = async (driver: DriverCreateInput): Promise<Driver> => {
   return prisma.driver.create({
-    data: {
-      first_name, 
-      last_name, 
-      status,
-    },
+    data: driver,
   });
 };
 
-export const updateById = async ( id: number, { first_name, last_name, status }: any,
-) => {
+export const updateById = async ( 
+  id: number, 
+  changes: DriverUpdateInput,
+): Promise<Driver> => {
   return prisma.driver.update({
     where: {
       id,
     },
-    data: {
-      first_name,
-      last_name,
-      status,
-    },
+    data: changes,
+    select: DRIVER_SELECT,
   });
 };
 
-export const deleteById = async (id: number) => {
+export const deleteById = async (id: number): Promise<void> => {
   await prisma.driver.delete({
     where: {
       id,

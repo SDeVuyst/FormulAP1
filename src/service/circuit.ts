@@ -1,5 +1,6 @@
 // src/service/circuit.ts
 import { prisma } from '../data';
+import type { Circuit, CircuitCreateInput, CircuitUpdateInput } from '../types/circuit';
 
 const CIRCUIT_SELECT = {
   id: true,
@@ -9,13 +10,13 @@ const CIRCUIT_SELECT = {
   active: true,
 };
 
-export const getAll = async () => {
+export const getAll = async (): Promise<Circuit[]> => {
   return prisma.circuit.findMany({
     select: CIRCUIT_SELECT,
   });
 };
 
-export const getById = async (id: number) => {
+export const getById = async (id: number): Promise<Circuit> => {
   const circuit = await prisma.circuit.findUnique({
     where: {
       id,
@@ -30,32 +31,26 @@ export const getById = async (id: number) => {
   return circuit;
 };
 
-export const create = async ({ name, city, country, active }: any) => {
+export const create = async (circuit: CircuitCreateInput): Promise<Circuit> => {
   return prisma.circuit.create({
-    data: {
-      name,
-      city,
-      country,
-      active,
-    },
+    data: circuit,
   });
 };
 
-export const updateById = async ( id: number, { name, city, country, active }: any) => {
+export const updateById = async ( 
+  id: number,
+  changes: CircuitUpdateInput,
+): Promise<Circuit> => {
   return prisma.circuit.update({
     where: {
       id,
     },
-    data: {
-      name,
-      city,
-      country,
-      active,
-    },
+    data: changes,
+    select: CIRCUIT_SELECT,
   });
 };
 
-export const deleteById = async (id: number) => {
+export const deleteById = async (id: number): Promise<void> => {
   await prisma.circuit.delete({
     where: {
       id,
