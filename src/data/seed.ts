@@ -70,15 +70,6 @@ async function main() {
     ],
   });
 
-  // Seed results
-  // =================
-  await prisma.result.createMany({
-    // TODO
-    data: [
-        
-    ],
-  });
-
   // Seed drivers
   // ===========
   await prisma.driver.createMany({
@@ -124,6 +115,44 @@ async function main() {
         first_name: 'Michael',
         last_name: 'Schumacher',
         status: 'Retired',
+      },
+      {
+        id: 8,
+        first_name: 'George',
+        last_name: 'Russell',
+        status: 'Active',
+      },
+    ],
+  });
+
+  // Seed results
+  // =================
+  await prisma.result.createMany({
+    data: [
+      // SPA 2024 RACE
+      {
+        id: 1,
+        position: 1,
+        points: 25,
+        status: 'FIN',
+        race_id: 3,
+        driver_id: 1,
+      },
+      {
+        id: 2,
+        position: 0,
+        points: 0,
+        status: 'DQ',
+        race_id: 3,
+        driver_id: 8,
+      },
+      {
+        id: 3,
+        position: 2,
+        points: 18,
+        status: 'FIN',
+        race_id: 3,
+        driver_id: 4,
       },
     ],
   });
