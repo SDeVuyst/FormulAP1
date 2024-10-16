@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Circuit {
+  @@map("places")
+
+  id           Int            @id @default(autoincrement()) @db.UnsignedInt
+  name         String         @unique(map: "idx_circuit_name_unique") @db.VarChar(255)
+  city         String         @db.VarChar(255)
+  country      String         @db.VarChar(255)
+  active       Boolean
+  races Race[]
+}
+
+model Race {
+  @@map("races")
+
+  id           Int          @id @default(autoincrement()) @db.UnsignedInt
+  date         DateTime     @db.DateTime(0)
+  laps         Int
+  circuit_id   Int          @db.UnsignedInt
+  circuit      Circuit      @relation(fields: [circuit_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_race_circuit")
+  results      Result[]
+}
+
+model Result {
+  @@map("results")
+
+  id            Int            @id @default(autoincrement()) @db.UnsignedInt
+  position      Int            @db.UnsignedMediumInt()
+  points        Int            @db.MediumInt()
+  status        String         @db.VarChar(255)
+  race_id       Int            @db.UnsignedInt
+  driver_id     Int            @db.UnsignedInt
+  race          Race           @relation(fields: [race_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_result_race")
+  driver        Driver         @relation(fields: [driver_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_result_driver")
+}
+
+model Driver {
+  @@map("drivers")
+
+  id                Int          @id @default(autoincrement()) @db.UnsignedInt
+  first_name        String       @db.VarChar(255)
+  last_name         String       @db.VarChar(255)
+  status            String       @db.VarChar(255)
+  results Result[]
+
+}
