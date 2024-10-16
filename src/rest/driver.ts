@@ -4,13 +4,14 @@ import * as resultService from '../service/result';
 import type { Context } from 'koa';
 
 const getAllDrivers = async (ctx: Context) => {
+  const drivers = await driverService.getAll();
   ctx.body = {
-    items: driverService.getAll(),
+    items: drivers,
   };
 };
 
 const createDriver = async (ctx: Context) => {
-  const newTransaction = driverService.create({
+  const newTransaction = await driverService.create({
     ...ctx.request.body,
     placeId: Number(ctx.request.body.placeId),
     date: new Date(ctx.request.body.date),
@@ -19,11 +20,12 @@ const createDriver = async (ctx: Context) => {
 };
 
 const getDriverById = async (ctx: Context) => {
-  ctx.body = driverService.getById(Number(ctx.params.id));
+  const driver = await driverService.getById(Number(ctx.params.id));
+  ctx.body = driver;
 };
 
 const updateDriver = async (ctx: Context) => {
-  ctx.body = driverService.updateById(Number(ctx.params.id), {
+  ctx.body = await driverService.updateById(Number(ctx.params.id), {
     ...ctx.request.body,
     placeId: Number(ctx.request.body.placeId),
     date: new Date(ctx.request.body.date),
@@ -31,7 +33,7 @@ const updateDriver = async (ctx: Context) => {
 };
 
 const deleteDriver = async (ctx: Context) => {
-  driverService.deleteById(Number(ctx.params.id));
+  await driverService.deleteById(Number(ctx.params.id));
   ctx.status = 204;
 };
 

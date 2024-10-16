@@ -4,13 +4,14 @@ import * as raceService from '../service/race';
 import type { Context } from 'koa';
 
 const getAllCircuits = async (ctx: Context) => {
+  const circuits = await circuitService.getAll();
   ctx.body = {
-    items: circuitService.getAll(),
+    items: circuits,
   };
 };
 
 const createCircuit = async (ctx: Context) => {
-  const newTransaction = circuitService.create({
+  const newTransaction = await circuitService.create({
     ...ctx.request.body,
     placeId: Number(ctx.request.body.placeId),
     date: new Date(ctx.request.body.date),
@@ -19,11 +20,12 @@ const createCircuit = async (ctx: Context) => {
 };
 
 const getCircuitById = async (ctx: Context) => {
-  ctx.body = circuitService.getById(Number(ctx.params.id));
+  const circuit = await circuitService.getById(Number(ctx.params.id));
+  ctx.body = circuit;
 };
 
 const updateCircuit = async (ctx: Context) => {
-  ctx.body = circuitService.updateById(Number(ctx.params.id), {
+  ctx.body = await circuitService.updateById(Number(ctx.params.id), {
     ...ctx.request.body,
     placeId: Number(ctx.request.body.placeId),
     date: new Date(ctx.request.body.date),
@@ -31,7 +33,7 @@ const updateCircuit = async (ctx: Context) => {
 };
 
 const deleteCircuit = async (ctx: Context) => {
-  circuitService.deleteById(Number(ctx.params.id));
+  await circuitService.deleteById(Number(ctx.params.id));
   ctx.status = 204;
 };
 

@@ -1,44 +1,97 @@
-// src/service/transaction.ts
-import { RESULTS } from '../data/mock_data';
+// src/service/result.ts
+import { prisma } from '../data';
 
-export const getAll = () => {
-  return RESULTS;
+const RESULT_SELECT = {
+  id: true,
+  position: true,
+  points: true,
+  status: true,
+  race: {
+    select: {
+      id: true,
+    },
+  },
+  driver: {
+    select: {
+      id: true,
+    },
+  },
 };
 
-export const getById = (id: number) => {
-  return RESULTS.find((r) => r.id === id);
+export const getAll = async () => {
+  return prisma.result.findMany({
+    select: RESULT_SELECT,
+  });
 };
 
-export const create = ({ position, points, status, race, driver }: any) => {
+export const getById = async (id: number) => {
+  const result = await prisma.result.findUnique({
+    where: {
+      id,
+    },
+    select: RESULT_SELECT,
+  });
 
-  const maxId = Math.max(...RESULTS.map((i) => i.id));
+  if (!result) {
+    throw new Error('No result with this id exists');
+  }
 
-  const newResult = {
-    id: maxId + 1,
-    position, points, status, race, driver,
-  };
-
-  RESULTS.push(newResult);
-  return newResult;
+  return result;
 };
 
-export const updateById = (
-  id: number,
-  { position, points, status, race, driver }: any,
-) => {
-  // todo
-  throw new Error('Not implemented yet!');
+export const create = async ({ position, points, status, race_id, driver_id }: any) => {
+  return prisma.result.create({
+    data: {
+      position, 
+      points, 
+      status, 
+      race_id, 
+      driver_id,
+    },
+  });
 };
 
-export const deleteById = (id: number) => {
-  // todo
-  throw new Error('Not implemented yet!');
+export const updateById = async ( id: number, { position, points, status, race_id, driver_id }: any) => {
+  return prisma.result.update({
+    where: {
+      id,
+    },
+    data: {
+      position, 
+      points, 
+      status, 
+      race_id, 
+      driver_id,
+    },
+  });
+};
+
+export const deleteById = async (id: number) => {
+  await prisma.result.delete({
+    where: {
+      id,
+    },
+  });
 };
 
 export const getResultsByRaceId = async (raceId: number) => {
-  return RESULTS.filter((r) => r.race.id === raceId);
+  return prisma.result.findMany({
+    where: {
+      AND: [
+        { race_id: raceId },
+      ],
+    },
+    select: RESULT_SELECT,
+  });
 };
 
 export const getResultsByDriverId = async (driverId: number) => {
-  return RESULTS.filter((r) => r.driver.id === driverId);
+  return prisma.result.findMany({
+    where: {
+      AND: [
+        { driver_id: driverId },
+      ],
+    },
+    select: RESULT_SELECT,
+  });
 };

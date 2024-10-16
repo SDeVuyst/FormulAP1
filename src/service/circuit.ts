@@ -1,36 +1,64 @@
-// src/service/transaction.ts
-import { CIRCUITS } from '../data/mock_data';
+// src/service/circuit.ts
+import { prisma } from '../data';
 
-export const getAll = () => {
-  return CIRCUITS;
+const CIRCUIT_SELECT = {
+  id: true,
+  name: true,
+  city: true,
+  country: true,
+  active: true,
 };
 
-export const getById = (id: number) => {
-  return CIRCUITS.find((c) => c.id === id);
+export const getAll = async () => {
+  return prisma.circuit.findMany({
+    select: CIRCUIT_SELECT,
+  });
 };
 
-export const create = ({ name, city, country, active }: any) => {
+export const getById = async (id: number) => {
+  const circuit = await prisma.circuit.findUnique({
+    where: {
+      id,
+    },
+    select: CIRCUIT_SELECT,
+  });
 
-  const maxId = Math.max(...CIRCUITS.map((i) => i.id));
+  if (!circuit) {
+    throw new Error('No circuit with this id exists');
+  }
 
-  const newCircuit = {
-    id: maxId + 1,
-    name, city, country, active,
-  };
-
-  CIRCUITS.push(newCircuit);
-  return newCircuit;
+  return circuit;
 };
 
-export const updateById = (
-  id: number,
-  { name, city, country, active }: any,
-) => {
-  // todo
-  throw new Error('Not implemented yet!');
+export const create = async ({ name, city, country, active }: any) => {
+  return prisma.circuit.create({
+    data: {
+      name,
+      city,
+      country,
+      active,
+    },
+  });
 };
 
-export const deleteById = (id: number) => {
-  // todo
-  throw new Error('Not implemented yet!');
+export const updateById = async ( id: number, { name, city, country, active }: any) => {
+  return prisma.circuit.update({
+    where: {
+      id,
+    },
+    data: {
+      name,
+      city,
+      country,
+      active,
+    },
+  });
+};
+
+export const deleteById = async (id: number) => {
+  await prisma.circuit.delete({
+    where: {
+      id,
+    },
+  });
 };

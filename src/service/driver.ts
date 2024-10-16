@@ -1,38 +1,62 @@
-// src/service/transaction.ts
-import { DRIVERS } from '../data/mock_data';
+// src/service/driver.ts
+import { prisma } from '../data';
 
-export const getAll = () => {
-  return DRIVERS;
+const DRIVER_SELECT = {
+  id: true,
+  first_name: true,
+  last_name: true,
+  status: true,
 };
 
-export const getById = (id: number) => {
-  return DRIVERS.find((d) => d.id === id);
+export const getAll = async () => {
+  return prisma.driver.findMany({
+    select: DRIVER_SELECT,
+  });
 };
 
-export const create = ({ first_name, last_name, status }: any) => {
+export const getById = async (id: number) => {
+  const driver = await prisma.circuit.findUnique({
+    where: {
+      id,
+    },
+    select: DRIVER_SELECT,
+  });
 
-  const maxId = Math.max(...DRIVERS.map((i) => i.id));
+  if (!driver) {
+    throw new Error('No driver with this id exists');
+  }
 
-  const newDriver = {
-    id: maxId + 1, // 👈 2
-    first_name,
-    last_name,
-    status,
-  };
-
-  DRIVERS.push(newDriver); // 👈 4
-  return newDriver; // 👈 5
+  return driver;
 };
 
-export const updateById = (
-  id: number,
-  { first_name, last_name, status }: any,
+export const create = async ({ first_name, last_name, status }: any) => {
+  return prisma.driver.create({
+    data: {
+      first_name, 
+      last_name, 
+      status,
+    },
+  });
+};
+
+export const updateById = async ( id: number, { first_name, last_name, status }: any,
 ) => {
-  // todo
-  throw new Error('Not implemented yet!');
+  return prisma.driver.update({
+    where: {
+      id,
+    },
+    data: {
+      first_name,
+      last_name,
+      status,
+    },
+  });
 };
 
-export const deleteById = (id: number) => {
-  // todo
-  throw new Error('Not implemented yet!');
+export const deleteById = async (id: number) => {
+  await prisma.driver.delete({
+    where: {
+      id,
+    },
+  });
 };

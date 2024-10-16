@@ -1,40 +1,78 @@
-// src/service/transaction.ts
-import { RACES } from '../data/mock_data';
+// src/service/race.ts
+import { prisma } from '../data';
 
-export const getAll = () => {
-  return RACES;
+// TODO: maybe include result ids?
+const RACE_SELECT = {
+  id: true,
+  date: true,
+  laps: true,
+  circuit: {
+    select: {
+      id: true,
+      name: true,
+    },
+  },
 };
 
-export const getById = (id: number) => {
-  return RACES.find((r) => r.id === id);
+export const getAll = async () => {
+  return prisma.race.findMany({
+    select: RACE_SELECT,
+  });
 };
 
-export const create = ({ date, laps, circuit }: any) => {
+export const getById = async (id: number) => {
+  const race = await prisma.race.findUnique({
+    where: {
+      id,
+    },
+    select: RACE_SELECT,
+  });
 
-  const maxId = Math.max(...RACES.map((i) => i.id));
+  if (!race) {
+    throw new Error('No race with this id exists');
+  }
 
-  const newRace = {
-    id: maxId + 1,
-    date, laps, circuit,
-  };
-
-  RACES.push(newRace);
-  return newRace;
+  return race;
 };
 
-export const updateById = (
-  id: number,
-  { date, laps, circuit }: any,
-) => {
-  // todo
-  throw new Error('Not implemented yet!');
+export const create = async ({ date, laps, circuit_id }: any) => {
+  return prisma.race.create({
+    data: {
+      date, 
+      laps, 
+      circuit_id,
+    },
+  });
 };
 
-export const deleteById = (id: number) => {
-  // todo
-  throw new Error('Not implemented yet!');
+export const updateById = async (id: number, { date, laps, circuit_id }: any) => {
+  return prisma.race.update({
+    where: {
+      id,
+    },
+    data: {
+      date,
+      laps,
+      circuit_id,
+    },
+  });
+};
+
+export const deleteById = async (id: number) => {
+  await prisma.race.delete({
+    where: {
+      id,
+    },
+  });
 };
 
 export const getRacesByCircuitId = async (circuitId: number) => {
-  return RACES.filter((r) => r.circuit.id === circuitId);
+  return prisma.race.findMany({
+    where: {
+      AND: [
+        { circuit_id: circuitId },
+      ],
+    },
+    select: RACE_SELECT,
+  });
 };

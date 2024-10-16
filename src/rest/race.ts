@@ -4,13 +4,14 @@ import * as resultService from '../service/result';
 import type { Context } from 'koa';
 
 const getAllRaces = async (ctx: Context) => {
+  const races = await raceService.getAll();
   ctx.body = {
-    items: raceService.getAll(),
+    items: races,
   };
 };
 
 const createRace = async (ctx: Context) => {
-  const newTransaction = raceService.create({
+  const newTransaction = await raceService.create({
     ...ctx.request.body,
     placeId: Number(ctx.request.body.placeId),
     date: new Date(ctx.request.body.date),
@@ -19,11 +20,12 @@ const createRace = async (ctx: Context) => {
 };
 
 const getRaceById = async (ctx: Context) => {
-  ctx.body = raceService.getById(Number(ctx.params.id));
+  const race = raceService.getById(Number(ctx.params.id));
+  ctx.body = race;
 };
 
 const updateRace = async (ctx: Context) => {
-  ctx.body = raceService.updateById(Number(ctx.params.id), {
+  ctx.body = await raceService.updateById(Number(ctx.params.id), {
     ...ctx.request.body,
     placeId: Number(ctx.request.body.placeId),
     date: new Date(ctx.request.body.date),
@@ -31,7 +33,7 @@ const updateRace = async (ctx: Context) => {
 };
 
 const deleteRace = async (ctx: Context) => {
-  raceService.deleteById(Number(ctx.params.id));
+  await raceService.deleteById(Number(ctx.params.id));
   ctx.status = 204;
 };
 
