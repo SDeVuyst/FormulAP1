@@ -3,6 +3,7 @@ import bodyParser from 'koa-bodyparser';
 import type { KoaApplication } from '../types/koa';
 import { getLogger } from './logging';
 import ServiceError from './serviceError';
+import koaHelmet from 'koa-helmet';
 
 const NODE_ENV = config.get<string>('env');
 
@@ -27,6 +28,7 @@ export default function installMiddlewares(app: KoaApplication) {
   });
 
   app.use(bodyParser());
+  app.use(koaHelmet()); 
 
   app.use(async (ctx, next) => {
     try {

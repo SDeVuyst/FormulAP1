@@ -3293,6 +3293,7 @@ __metadata:
     joi: "npm:^17.13.3"
     koa: "npm:^2.15.3"
     koa-bodyparser: "npm:^4.4.1"
+    koa-helmet: "npm:^7.0.2"
     prisma: "npm:^5.21.0"
     supertest: "npm:^7.0.0"
     ts-jest: "npm:^29.2.5"
@@ -3542,6 +3543,13 @@ __metadata:
   dependencies:
     function-bind: "npm:^1.1.2"
   checksum: 10c0/3769d434703b8ac66b209a4cca0737519925bbdb61dd887f93a16372b14694c63ff4e797686d87c90f08168e81082248b9b028bad60d4da9e0d1148766f56eb9
+  languageName: node
+  linkType: hard
+
+"helmet@npm:^6.0.1":
+  version: 6.2.0
+  resolution: "helmet@npm:6.2.0"
+  checksum: 10c0/52d97adfdb151ebdc08e5d78eb93eebfb7e8e3e0563e68664828138dc6ab2d9d512b4ae71e1f8c6fcf8ddc38f87908325971d95dcabaafd4fde1f5b0faabeb8c
   languageName: node
   linkType: hard
 
@@ -4505,6 +4513,15 @@ __metadata:
     co: "npm:^4.6.0"
     koa-compose: "npm:^4.1.0"
   checksum: 10c0/d3e243ceccd11524d5f4942f6ccd828a9b18a1a967c4375192aa9eedf844f790563632839f006732ce8ca720275737c65a3bab344e13b25f41fb2be451ea102c
+  languageName: node
+  linkType: hard
+
+"koa-helmet@npm:^7.0.2":
+  version: 7.0.2
+  resolution: "koa-helmet@npm:7.0.2"
+  dependencies:
+    helmet: "npm:^6.0.1"
+  checksum: 10c0/ab6fd4084829c469192ab99978fcab96a719e57933cadbfc4f86523da795becfea12a51504241b5b319cbbf6a6a0532579818ad27ac6905f85d389c5a20b812c
   languageName: node
   linkType: hard
 
