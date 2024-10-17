@@ -3,7 +3,7 @@ import { getLogger } from './core/logging';
 import { initializeData, shutdownData } from './data';
 import installRest from './rest';
 import type { FormulaAppContext, FormulaAppState, KoaApplication } from './types/koa';
-import bodyParser from 'koa-bodyparser';
+import installMiddlewares from './core/installMiddlewares';
 
 export interface Server {
   getApp(): KoaApplication;
@@ -13,9 +13,8 @@ export interface Server {
 
 export default async function createServer(): Promise<Server> {
   const app = new Koa<FormulaAppState, FormulaAppContext>();
-
-  app.use(bodyParser());
   
+  installMiddlewares(app);
   await initializeData();
   installRest(app);
 
