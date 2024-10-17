@@ -193,7 +193,7 @@ describe('Results', () => {
 
     it('should 201 and return the created result', async () => {
       const response = await request.post(url).send({
-        position: 0,
+        position: 21,
         points: 0,
         status: 'DQ',
         race_id: 1,
@@ -202,7 +202,7 @@ describe('Results', () => {
 
       expect(response.status).toBe(201);
       expect(response.body.id).toBeTruthy();
-      expect(response.body.position).toEqual(0);
+      expect(response.body.position).toEqual(21);
       expect(response.body.status).toEqual('DQ');
       expect(response.body.race.id).toEqual(1);
       expect(response.body.driver.id).toEqual(2);      

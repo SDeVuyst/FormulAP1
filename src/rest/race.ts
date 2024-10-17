@@ -12,6 +12,8 @@ import type {
 } from '../types/race';
 import type { IdParams } from '../types/common';
 import type { GetAllResultsResponse } from '../types/result';
+import validate from '../core/validation';
+import Joi from 'joi';
 
 const getAllRaces = async (ctx: KoaContext<GetAllRacesResponse>) => {
   const races = await raceService.getAll();
@@ -19,6 +21,7 @@ const getAllRaces = async (ctx: KoaContext<GetAllRacesResponse>) => {
     items: races,
   };
 };
+getAllRaces.validationScheme = null;
 
 const createRace = async (ctx: KoaContext<CreateRaceResponse, void, CreateRaceRequest>) => {
   const newRace = await raceService.create(ctx.request.body);
@@ -26,9 +29,23 @@ const createRace = async (ctx: KoaContext<CreateRaceResponse, void, CreateRaceRe
   ctx.body = newRace;
 };
 
+createRace.validationScheme = {
+  body: {
+    date: Joi.date().iso(),
+    laps: Joi.number().integer().positive(),
+    circuit_id: Joi.number().integer().positive(),
+  },
+};
+
 const getRaceById = async (ctx: KoaContext<GetRaceByIdResponse, IdParams>) => {
   const race = await raceService.getById(Number(ctx.params.id));
   ctx.body = race;
+};
+
+getRaceById.validationScheme = {
+  params: {
+    id: Joi.number().integer().positive(),
+  },
 };
 
 const updateRace = async (
@@ -37,9 +54,24 @@ const updateRace = async (
   ctx.body = await raceService.updateById(Number(ctx.params.id), ctx.request.body);
 };
 
+updateRace.validationScheme = {
+  params: { id: Joi.number().integer().positive() },
+  body: {
+    date: Joi.date().iso(),
+    laps: Joi.number().integer().positive(),
+    circuit_id: Joi.number().integer().positive(),
+  },
+};
+
 const deleteRace = async (ctx: KoaContext<void, IdParams>) => {
   await raceService.deleteById(Number(ctx.params.id));
   ctx.status = 204;
+};
+
+deleteRace.validationScheme = {
+  params: {
+    id: Joi.number().integer().positive(),
+  },
 };
 
 const getResultsByRaceId = async(ctx: KoaContext<GetAllResultsResponse, IdParams>) => {
@@ -51,17 +83,23 @@ const getResultsByRaceId = async(ctx: KoaContext<GetAllResultsResponse, IdParams
   };
 };
 
+getResultsByRaceId.validationScheme = {
+  params: {
+    id: Joi.number().integer().positive(),
+  },
+};
+
 export default (parent: KoaRouter) => {
   const router = new Router<FormulaAppState, FormulaAppContext>({
     prefix: '/races',
   });
 
-  router.get('/', getAllRaces);
-  router.post('/', createRace);
-  router.get('/:id', getRaceById);
-  router.put('/:id', updateRace);
-  router.delete('/:id', deleteRace);
-  router.get('/:id/results', getResultsByRaceId);
+  router.get('/', validate(getAllRaces.validationScheme), getAllRaces);
+  router.post('/', validate(createRace.validationScheme), createRace);
+  router.get('/:id', validate(getRaceById.validationScheme), getRaceById);
+  router.put('/:id', validate(updateRace.validationScheme), updateRace);
+  router.delete('/:id', validate(deleteRace.validationScheme), deleteRace);
+  router.get('/:id/results', validate(getResultsByRaceId.validationScheme), getResultsByRaceId);
 
   parent.use(router.routes()).use(router.allowedMethods());
 };
