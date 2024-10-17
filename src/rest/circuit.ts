@@ -17,6 +17,16 @@ import type { IdParams } from '../types/common';
 import Joi from 'joi';
 import validate from '../core/validation';
 
+// TODO: api docs @apiError 
+/**
+ * @api {get} /api/circuits Get all circuits
+ * @apiName GetCircuits
+ * @apiGroup Circuit
+ * 
+ * @apiSuccess {Circuit[]} circuits List of circuits.
+ * 
+ * @apiError (400) BadRequest the request should not contain an argument.
+ */
 const getAllCircuits = async (ctx: KoaContext<GetAllCircuitsResponse>) => {
   const circuits = await circuitService.getAll();
   ctx.body = {
@@ -25,6 +35,24 @@ const getAllCircuits = async (ctx: KoaContext<GetAllCircuitsResponse>) => {
 };
 getAllCircuits.validationScheme = null;
 
+/**
+ * @api {post} /api/circuits Create new circuit
+ * @apiName NewCircuit
+ * @apiGroup Circuit
+ * 
+ * @apiBody {String{..255}} name Unique circuit name.
+ * @apiBody {String{..255}} city Circuit city.
+ * @apiBody {String{..255}} country Circuit country.
+ * @apiBody {Boolean} active If circuit is active in the F1 Calendar.
+ * 
+ * @apiSuccess {Int} id Circuit ID.
+ * @apiSuccess {String} name Circuit name.
+ * @apiSuccess {String} city Circuit city.
+ * @apiSuccess {String} country Circuit country.
+ * @apiSuccess {Boolean} active If circuit is active in the F1 Calendar.\
+ * 
+ * @apiError (400) BadRequest Incorrect request.
+ */
 const createCircuit = async (ctx: KoaContext<CreateCircuitResponse, void, CreateCircuitRequest>) => {
   const newCircuit = await circuitService.create(ctx.request.body);
   ctx.status = 201;
@@ -40,6 +68,22 @@ createCircuit.validationScheme = {
   },
 };
 
+/**
+ * @api {get} /api/circuits/:id Get circuit by Id
+ * @apiName GetCircuitById
+ * @apiGroup Circuit
+ * 
+ * @apiParam {Int} id Circuit ID.
+ * 
+ * @apiSuccess {Int} id Circuit ID.
+ * @apiSuccess {String{..255}} name Circuit name.
+ * @apiSuccess {String{..255}} city Circuit city.
+ * @apiSuccess {String{..255}} country Circuit country.
+ * @apiSuccess {Boolean} active If circuit is active in the F1 Calendar.
+ * 
+ * @apiError (404) NotFound No circuit with this id exists.
+ * @apiError (400) BadRequest Invalid circuit id.
+ */
 const getCircuitById = async (ctx: KoaContext<GetCircuitByIdResponse, IdParams>) => {
   const circuit = await circuitService.getById(ctx.params.id);
   ctx.body = circuit;
@@ -51,6 +95,25 @@ getCircuitById.validationScheme = {
   },
 };
 
+/**
+ * @api {put} /api/circuits/:id Update circuit by Id
+ * @apiName UpdateCircuit
+ * @apiGroup Circuit
+ * 
+ * @apiParam {Int} id Circuit's unique ID.
+ * @apiBody {String{..255}} name Circuit name.
+ * @apiBody {String{..255}} city Circuit city.
+ * @apiBody {String{..255}} country Circuit country.
+ * @apiBody {Boolean{..255}} active If the circuit is active in the F1 Calendar.
+ * 
+ * @apiSuccess {Int} id Circuit ID.
+ * @apiSuccess {String} name Circuit name.
+ * @apiSuccess {String} city Circuit city.
+ * @apiSuccess {String} country Circuit country.
+ * @apiSuccess {Boolean} active If the circuit is active in the F1 Calendar. 
+ * @apiError (404) NotFound No circuit with this id exists.
+ * @apiError (400) BadRequest Invalid request.
+ */
 const updateCircuit = async (
   ctx: KoaContext<UpdateCircuitResponse, IdParams, UpdateCircuitRequest>,
 ) => {
@@ -67,6 +130,17 @@ updateCircuit.validationScheme = {
   },
 };
 
+/**
+ * @api {delete} /api/circuits/:id Delete circuit
+ * @apiName DeleteCircuit
+ * @apiGroup Circuit
+ * 
+ * @apiParam {Int} id Circuit's unique ID (URL parameter).
+ * 
+ * @apiSuccess (204) NoContent The circuit was successfully deleted and no content is returned.
+ * 
+ * @apiError (404) NotFound No circuit with this id exists.
+ */
 const deleteCircuit = async (ctx: KoaContext<void, IdParams>) => {
   await circuitService.deleteById(Number(ctx.params.id));
   ctx.status = 204;
@@ -78,6 +152,17 @@ deleteCircuit.validationScheme = {
   },
 };
 
+/**
+ * @api {get} /api/circuits/:id/races Get races by circuit Id
+ * @apiName GetRacesByCircuit
+ * @apiGroup Circuit
+ * 
+ * @apiParam {Int} id Circuit's unique ID (URL parameter).
+ * 
+ * @apiSuccess {Races[]} races List of races.
+ * 
+ * @apiError (404) NotFound No circuit with this id exists.
+ */
 const getRacesByCircuitId = async(ctx: KoaContext<GetAllRacesResponse, IdParams>) => {
   const races = await raceService.getRacesByCircuitId(
     Number(ctx.params.id),

@@ -14,7 +14,8 @@
     "migrate:dev": "prisma migrate dev",
     "migrate:test": "env-cmd -f .env.test prisma migrate dev --skip-seed",
     "test": "env-cmd -f .env.test jest --runInBand",
-    "test:coverage": "env-cmd -f .env.test jest --runInBand --coverage"
+    "test:coverage": "env-cmd -f .env.test jest --runInBand --coverage",
+    "docs": "npx apidoc -i src/ -o docs/"
   },
   "dependencies": {
     "@koa/router": "^13.1.0",
@@ -37,6 +38,7 @@
     "@types/koa__router": "^12.0.4",
     "@types/node": "^22.7.5",
     "@types/supertest": "^6.0.2",
+    "apidoc": "^1.2.0",
     "env-cmd": "^10.1.0",
     "eslint": "^9.12.0",
     "eslint-plugin-jest": "^28.8.3",

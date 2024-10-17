@@ -13,6 +13,13 @@ import type { IdParams } from '../types/common';
 import validate from '../core/validation';
 import Joi from 'joi';
 
+/**
+ * @api {get} /api/results Get all results
+ * @apiName GetResuls
+ * @apiGroup Result
+ * 
+ * @apiSuccess {Result[]} results List of results.
+ */
 const getAllResults = async (ctx: KoaContext<GetAllResultsResponse>) => {
   const results = await resultService.getAll();
   ctx.body = {
@@ -21,6 +28,27 @@ const getAllResults = async (ctx: KoaContext<GetAllResultsResponse>) => {
 };
 getAllResults.validationScheme = null;
 
+/**
+ * @api {post} /api/results/ Create new result
+ * @apiName CreateResult
+ * @apiGroup Result
+ * 
+ * @apiBody {Int} position Finishing position.
+ * @apiBody {Int} points Amount of points rewarded.
+ * @apiBody {String} [status] Status of Result eg. FIN, DQ.
+ * @apiBody {Int} race_id Race ID.
+ * @apiBody {Int} driver_id Driver ID.
+ * 
+ * @apiSuccess {Int} id Result ID.
+ * @apiSuccess {Int} position Finishing position.
+ * @apiSuccess {Int} points Amount of points rewarded.
+ * @apiSuccess {String} [status] Status of Result eg. FIN, DQ.
+ * @apiSuccess {Int} race.id Race ID.
+ * @apiSuccess {Int} driver.id Driver ID.
+ * 
+ * @apiError (404) NotFound No race with this id exists.
+ * @apiError (400) BadRequest Invalid race id.
+ */
 const createResult = async (ctx: KoaContext<CreateResultResponse, void, CreateResultRequest>) => {
   const newResult = await resultService.create(ctx.request.body);
   ctx.status = 201;
@@ -37,6 +65,23 @@ createResult.validationScheme = {
   },
 };
 
+/**
+ * @api {get} /api/results/:id Get result by Id
+ * @apiName GetResultById
+ * @apiGroup Result
+ * 
+ * @apiParam {Int} id Result ID.
+ * 
+ * @apiSuccess {Int} id Result ID.
+ * @apiSuccess {Int} position Finishing position.
+ * @apiSuccess {Int} points Amount of points rewarded.
+ * @apiSuccess {String} [status] Status of Result eg. FIN, DQ.
+ * @apiSuccess {Int} race.id Race ID.
+ * @apiSuccess {Int} driver.id Driver ID.
+ * 
+ * @apiError (404) NotFound No race with this id exists.
+ * @apiError (400) BadRequest Invalid race id.
+ */
 const getResultById = async (ctx: KoaContext<GetResultByIdResponse, IdParams>) => {
   const result = await resultService.getById(Number(ctx.params.id));
   ctx.body = result;
@@ -48,6 +93,29 @@ getResultById.validationScheme = {
   },
 };
 
+/**
+ * @api {post} /api/results/:id Update result by Id
+ * @apiName UpdateResultById
+ * @apiGroup Result
+ * 
+ * @apiParam {Int} id Result ID.
+ * 
+ * @apiBody {Int} position Finishing position.
+ * @apiBody {Int} points Amount of points rewarded.
+ * @apiBody {String} [status] Status of Result eg. FIN, DQ.
+ * @apiBody {Int} race_id Race ID.
+ * @apiBody {Int} driver_id Driver ID.
+ * 
+ * @apiSuccess {Int} id Result ID.
+ * @apiSuccess {Int} position Finishing position.
+ * @apiSuccess {Int} points Amount of points rewarded.
+ * @apiSuccess {String} [status] Status of Result eg. FIN, DQ.
+ * @apiSuccess {Int} race.id Race ID.
+ * @apiSuccess {Int} driver.id Driver ID.
+ * 
+ * @apiError (404) NotFound No race with this id exists.
+ * @apiError (400) BadRequest Invalid race id.
+ */
 const updateResult = async (
   ctx: KoaContext<UpdateResultResponse, IdParams, UpdateResultRequest>,
 ) => {
@@ -65,6 +133,17 @@ updateResult.validationScheme = {
   },
 };
 
+/**
+ * @api {delete} /api/results/:id Delete result
+ * @apiName DeleteRace
+ * @apiGroup Result
+ * 
+ * @apiParam {Int} id Results unique ID (URL parameter).
+ * 
+ * @apiSuccess (204) NoContent The result was successfully deleted and no content is returned.
+ * 
+ * @apiError (404) NotFound No result with this id exists.
+ */
 const deleteResult = async (ctx: KoaContext<void, IdParams>) => {
   await resultService.deleteById(Number(ctx.params.id));
   ctx.status = 204;
