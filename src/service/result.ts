@@ -1,6 +1,10 @@
 // src/service/result.ts
+import ServiceError from '../core/serviceError';
 import { prisma } from '../data';
 import type { Result, ResultCreateInput, ResultUpdateInput } from '../types/result';
+import handleDBError from './_handleDBError';
+import * as raceService from './race';
+import * as driverService from './driver';
 
 const RESULT_SELECT = {
   id: true,
@@ -34,7 +38,7 @@ export const getById = async (id: number): Promise<Result> => {
   });
 
   if (!result) {
-    throw new Error('No result with this id exists');
+    throw ServiceError.notFound('No result with this id exists');
   }
 
   return result;
@@ -47,16 +51,24 @@ export const create = async ({
   race_id, 
   driver_id,
 }: ResultCreateInput): Promise<Result> => {
-  return await prisma.result.create({
-    data: {
-      position, 
-      points, 
-      status, 
-      race_id: race_id, 
-      driver_id: driver_id,
-    },
-    select: RESULT_SELECT,
-  });
+  try {
+
+    await raceService.checkRaceExists(race_id);
+    await driverService.checkDriverExists(driver_id);
+
+    return await prisma.result.create({
+      data: {
+        position, 
+        points, 
+        status, 
+        race_id: race_id, 
+        driver_id: driver_id,
+      },
+      select: RESULT_SELECT,
+    });
+  } catch (error) {
+    throw handleDBError(error);
+  }
 };
 
 export const updateById = async ( id: number, { 
@@ -66,27 +78,35 @@ export const updateById = async ( id: number, {
   race_id, 
   driver_id,
 }: ResultUpdateInput): Promise<Result> => {
-  return await prisma.result.update({
-    where: {
-      id,
-    },
-    data: {
-      position, 
-      points, 
-      status, 
-      race_id: race_id, 
-      driver_id: driver_id,
-    },
-    select: RESULT_SELECT,
-  });
+  try {
+    return await prisma.result.update({
+      where: {
+        id,
+      },
+      data: {
+        position, 
+        points, 
+        status, 
+        race_id: race_id, 
+        driver_id: driver_id,
+      },
+      select: RESULT_SELECT,
+    });
+  } catch (error) {
+    throw handleDBError(error);
+  }
 };
 
 export const deleteById = async (id: number): Promise<void> => {
-  await prisma.result.delete({
-    where: {
-      id,
-    },
-  });
+  try {
+    await prisma.result.delete({
+      where: {
+        id,
+      },
+    });
+  } catch (error) {
+    throw handleDBError(error);
+  }
 };
 
 export const getResultsByRaceId = async (race_id: number): Promise<Result[]> => {
