@@ -117,6 +117,14 @@ describe('Results', () => {
       expect(response.status).toBe(200);
       expect(response.body.items.length).toBe(2);
     });
+
+    it('should 400 when given an argument', async () => {
+      const response = await request.get(`${url}?invalid=true`);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.code).toBe('VALIDATION_FAILED');
+      expect(response.body.details.query).toHaveProperty('invalid');
+    });
   });
 
   // get result by id
@@ -162,6 +170,26 @@ describe('Results', () => {
         status: 'FIN',
       });
     });
+
+    it('should 404 with not existing result', async () => {
+      const response = await request.get(`${url}/123`);
+
+      expect(response.statusCode).toBe(404);
+      expect(response.body).toMatchObject({
+        code: 'NOT_FOUND',
+        message: 'No result with this id exists',
+      });
+      expect(response.body.stack).toBeTruthy();
+    });
+
+    it('should 400 with result user id', async () => {
+      const response = await request.get(`${url}/invalid`);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.code).toBe('VALIDATION_FAILED');
+      expect(response.body.details.params).toHaveProperty('id');
+    });
+
   });
 
   // add new result
@@ -207,6 +235,14 @@ describe('Results', () => {
       expect(response.body.race.id).toEqual(1);
       expect(response.body.driver.id).toEqual(2);      
       resultsToDelete.push(response.body.id);
+    });
+
+    it('should 400 with invalid route', async () => {
+      const response = await request.get(`${url}/invalid`);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.code).toBe('VALIDATION_FAILED');
+      expect(response.body.details.params).toHaveProperty('id');
     });
 
   });
@@ -255,6 +291,26 @@ describe('Results', () => {
       expect(response.body.status).toEqual('FIN');
 
     });
+
+    it('should 404 with not existing result', async () => {
+      const response = await request.get(`${url}/123`);
+
+      expect(response.statusCode).toBe(404);
+      expect(response.body).toMatchObject({
+        code: 'NOT_FOUND',
+        message: 'No result with this id exists',
+      });
+      expect(response.body.stack).toBeTruthy();
+    });
+
+    it('should 400 with invalid result id', async () => {
+      const response = await request.get(`${url}/invalid`);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.code).toBe('VALIDATION_FAILED');
+      expect(response.body.details.params).toHaveProperty('id');
+    });
+
   });
 
   describe('DELETE /api/results/:id', () => {
@@ -288,6 +344,17 @@ describe('Results', () => {
 
       expect(response.statusCode).toBe(204);
       expect(response.body).toEqual({});
+    });
+
+    it('should 404 with not existing result', async () => {
+      const response = await request.delete(`${url}/123`);
+
+      expect(response.statusCode).toBe(404);
+      expect(response.body).toMatchObject({
+        code: 'NOT_FOUND',
+        message: 'No result with this id exists',
+      });
+      expect(response.body.stack).toBeTruthy();
     });
 
   });

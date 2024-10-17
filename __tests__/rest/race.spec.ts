@@ -115,6 +115,14 @@ describe('Races', () => {
       expect(response.status).toBe(200);
       expect(response.body.items.length).toBe(2);
     });
+
+    it('should 400 when given an argument', async () => {
+      const response = await request.get(`${url}?invalid=true`);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.code).toBe('VALIDATION_FAILED');
+      expect(response.body.details.query).toHaveProperty('invalid');
+    });
   });
 
   // get race by id
@@ -149,6 +157,26 @@ describe('Races', () => {
         },
       });
     });
+
+    it('should 404 with not existing race', async () => {
+      const response = await request.get(`${url}/123`);
+
+      expect(response.statusCode).toBe(404);
+      expect(response.body).toMatchObject({
+        code: 'NOT_FOUND',
+        message: 'No race with this id exists',
+      });
+      expect(response.body.stack).toBeTruthy();
+    });
+
+    it('should 400 with invalid race id', async () => {
+      const response = await request.get(`${url}/invalid`);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.code).toBe('VALIDATION_FAILED');
+      expect(response.body.details.params).toHaveProperty('id');
+    });
+
   });
 
   // add new race
@@ -193,6 +221,14 @@ describe('Races', () => {
       racesToDelete.push(response.body.id);
     });
 
+    it('should 400 with invalid route', async () => {
+      const response = await request.get(`${url}/invalid`);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.code).toBe('VALIDATION_FAILED');
+      expect(response.body.details.params).toHaveProperty('id');
+    });
+
   });
 
   // update existing race
@@ -232,6 +268,26 @@ describe('Races', () => {
       });
 
     });
+
+    it('should 404 with not existing race', async () => {
+      const response = await request.get(`${url}/123`);
+
+      expect(response.statusCode).toBe(404);
+      expect(response.body).toMatchObject({
+        code: 'NOT_FOUND',
+        message: 'No race with this id exists',
+      });
+      expect(response.body.stack).toBeTruthy();
+    });
+
+    it('should 400 with invalid race id', async () => {
+      const response = await request.get(`${url}/invalid`);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.code).toBe('VALIDATION_FAILED');
+      expect(response.body.details.params).toHaveProperty('id');
+    });
+
   });
 
   describe('DELETE /api/races/:id', () => {
@@ -257,6 +313,17 @@ describe('Races', () => {
 
       expect(response.statusCode).toBe(204);
       expect(response.body).toEqual({});
+    });
+
+    it('should 404 with not existing race', async () => {
+      const response = await request.delete(`${url}/123`);
+
+      expect(response.statusCode).toBe(404);
+      expect(response.body).toMatchObject({
+        code: 'NOT_FOUND',
+        message: 'No race with this id exists',
+      });
+      expect(response.body.stack).toBeTruthy();
     });
 
   });
@@ -312,5 +379,14 @@ describe('Races', () => {
       ]);
 
     });
+
+    it('should 400 with invalid race id', async () => {
+      const response = await request.get(`${url}/invalid/results`);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.code).toBe('VALIDATION_FAILED');
+      expect(response.body.details.params).toHaveProperty('id');
+    });
+
   });
 });

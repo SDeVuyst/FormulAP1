@@ -99,6 +99,14 @@ describe('Drivers', () => {
       expect(response.status).toBe(200);
       expect(response.body.items.length).toBe(1);
     });
+
+    it('should 400 when given an argument', async () => {
+      const response = await request.get(`${url}?invalid=true`);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.code).toBe('VALIDATION_FAILED');
+      expect(response.body.details.query).toHaveProperty('invalid');
+    });
   });
 
   // get driver by id
@@ -126,6 +134,26 @@ describe('Drivers', () => {
         status: 'Active',
       });
     });
+
+    it('should 404 with not existing driver', async () => {
+      const response = await request.get(`${url}/123`);
+
+      expect(response.statusCode).toBe(404);
+      expect(response.body).toMatchObject({
+        code: 'NOT_FOUND',
+        message: 'No driver with this id exists',
+      });
+      expect(response.body.stack).toBeTruthy();
+    });
+
+    it('should 400 with invalid driver id', async () => {
+      const response = await request.get(`${url}/invalid`);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.code).toBe('VALIDATION_FAILED');
+      expect(response.body.details.params).toHaveProperty('id');
+    });
+
   });
 
   // add new driver
@@ -163,6 +191,14 @@ describe('Drivers', () => {
       driversToDelete.push(response.body.id);
     });
 
+    it('should 400 with invalid route', async () => {
+      const response = await request.get(`${url}/invalid`);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.code).toBe('VALIDATION_FAILED');
+      expect(response.body.details.params).toHaveProperty('id');
+    });
+
   });
 
   // update existing driver
@@ -195,6 +231,26 @@ describe('Drivers', () => {
       expect(response.body.status).toEqual('Active');
 
     });
+
+    it('should 404 with not existing driver', async () => {
+      const response = await request.get(`${url}/123`);
+
+      expect(response.statusCode).toBe(404);
+      expect(response.body).toMatchObject({
+        code: 'NOT_FOUND',
+        message: 'No driver with this id exists',
+      });
+      expect(response.body.stack).toBeTruthy();
+    });
+
+    it('should 400 with invalid driver id', async () => {
+      const response = await request.get(`${url}/invalid`);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.code).toBe('VALIDATION_FAILED');
+      expect(response.body.details.params).toHaveProperty('id');
+    });
+
   });
 
   describe('DELETE /api/drivers/:id', () => {
@@ -216,6 +272,17 @@ describe('Drivers', () => {
 
       expect(response.statusCode).toBe(204);
       expect(response.body).toEqual({});
+    });
+
+    it('should 404 with not existing driver', async () => {
+      const response = await request.delete(`${url}/123`);
+
+      expect(response.statusCode).toBe(404);
+      expect(response.body).toMatchObject({
+        code: 'NOT_FOUND',
+        message: 'No driver with this id exists',
+      });
+      expect(response.body.stack).toBeTruthy();
     });
 
   });
@@ -279,6 +346,15 @@ describe('Drivers', () => {
       ]);
 
     });
+
+    it('should 400 with invalid driver id', async () => {
+      const response = await request.get(`${url}/invalid/results`);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.code).toBe('VALIDATION_FAILED');
+      expect(response.body.details.params).toHaveProperty('id');
+    });
+
   });
   
 });

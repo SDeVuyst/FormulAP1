@@ -98,6 +98,14 @@ describe('Circuits', () => {
       expect(response.status).toBe(200);
       expect(response.body.items.length).toBe(2);
     });
+
+    it('should 400 when given an argument', async () => {
+      const response = await request.get(`${url}?invalid=true`);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.code).toBe('VALIDATION_FAILED');
+      expect(response.body.details.query).toHaveProperty('invalid');
+    });
   });
 
   // get circuit by id
@@ -126,6 +134,26 @@ describe('Circuits', () => {
         active: true,
       });
     });
+
+    it('should 404 with not existing circuit', async () => {
+      const response = await request.get(`${url}/123`);
+
+      expect(response.statusCode).toBe(404);
+      expect(response.body).toMatchObject({
+        code: 'NOT_FOUND',
+        message: 'No circuit with this id exists',
+      });
+      expect(response.body.stack).toBeTruthy();
+    });
+
+    it('should 400 with invalid circuit id', async () => {
+      const response = await request.get(`${url}/invalid`);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.code).toBe('VALIDATION_FAILED');
+      expect(response.body.details.params).toHaveProperty('id');
+    });
+
   });
 
   // add new circuit
@@ -165,6 +193,31 @@ describe('Circuits', () => {
       circuitsToDelete.push(response.body.id);
     });
 
+    it('should 400 with invalid route', async () => {
+      const response = await request.get(`${url}/invalid`);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.code).toBe('VALIDATION_FAILED');
+      expect(response.body.details.params).toHaveProperty('id');
+    });
+
+    it('should 400 for duplicate circuit name', async () => {
+      const response = await request.post(url)
+        .send({
+          name: 'Circuit de Spa-Francorchamps',
+          city: 'Heusden-Zolder',
+          country: 'Belgium',
+          active: false,
+        });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body).toMatchObject({
+        code: 'VALIDATION_FAILED',
+        message: 'A circuit with this name already exists',
+      });
+      expect(response.body.stack).toBeTruthy();
+    });
+
   });
 
   // update existing circuit
@@ -199,6 +252,43 @@ describe('Circuits', () => {
       expect(response.body.active).toBeTruthy();
 
     });
+
+    it('should 404 with not existing circuit', async () => {
+      const response = await request.get(`${url}/123`);
+
+      expect(response.statusCode).toBe(404);
+      expect(response.body).toMatchObject({
+        code: 'NOT_FOUND',
+        message: 'No circuit with this id exists',
+      });
+      expect(response.body.stack).toBeTruthy();
+    });
+
+    it('should 400 with invalid circuit id', async () => {
+      const response = await request.get(`${url}/invalid`);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.code).toBe('VALIDATION_FAILED');
+      expect(response.body.details.params).toHaveProperty('id');
+    });
+
+    it('should 400 for duplicate circuit name', async () => {
+      const response = await request.put(`${url}/1`)
+        .send({
+          name: 'Circuit of The Americas',
+          city: 'Monaco City',
+          country: 'Monaco',
+          active: true,
+        });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body).toMatchObject({
+        code: 'VALIDATION_FAILED',
+        message: 'A circuit with this name already exists',
+      });
+      expect(response.body.stack).toBeTruthy();
+    });
+
   });
 
   describe('DELETE /api/circuits/:id', () => {
@@ -220,6 +310,17 @@ describe('Circuits', () => {
 
       expect(response.statusCode).toBe(204);
       expect(response.body).toEqual({});
+    });
+
+    it('should 404 with not existing circuit', async () => {
+      const response = await request.delete(`${url}/123`);
+
+      expect(response.statusCode).toBe(404);
+      expect(response.body).toMatchObject({
+        code: 'NOT_FOUND',
+        message: 'No circuit with this id exists',
+      });
+      expect(response.body.stack).toBeTruthy();
     });
 
   });
@@ -269,6 +370,15 @@ describe('Circuits', () => {
       ]);
 
     });
+
+    it('should 400 with invalid circuit id', async () => {
+      const response = await request.get(`${url}/invalid/races`);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.code).toBe('VALIDATION_FAILED');
+      expect(response.body.details.params).toHaveProperty('id');
+    });
+
   });
   
 });
