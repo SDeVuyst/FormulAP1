@@ -55,6 +55,10 @@ model Driver {
   first_name        String       @db.VarChar(255)
   last_name         String       @db.VarChar(255)
   status            String?      @db.VarChar(255)
-  results Result[]
+  // for login
+  email         String         @unique(map: "idx_driver_email_unique") @db.VarChar(255)
+  password_hash String         @db.VarChar(255)
+  roles         Json
 
+  results Result[]
 }

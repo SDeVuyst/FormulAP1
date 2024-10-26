@@ -1,5 +1,6 @@
 // src/data/seed.ts
 import { PrismaClient } from '@prisma/client';
+import { hashPassword } from '../core/password';
 
 const prisma = new PrismaClient();
 
@@ -72,6 +73,8 @@ async function main() {
 
   // Seed drivers
   // ===========
+  const passwordHash = await hashPassword('12345678');
+
   await prisma.driver.createMany({
     data: [
       {
@@ -79,48 +82,72 @@ async function main() {
         first_name: 'Lewis',
         last_name: 'Hamilton',
         status: 'Active',
+        email: 'lewis.hamilton@hogent.be',
+        password_hash: passwordHash,
+        roles: ['admin', 'user'],
       },
       {
         id: 2,
         first_name: 'Max',
         last_name: 'Verstappen',
         status: 'Active',
+        email: 'verstappenm@hogent.be',
+        password_hash: passwordHash,
+        roles: ['admin', 'user'],
       },
       {
         id: 3,
         first_name: 'Lando',
         last_name: 'Norris',
         status: 'Active',
+        email: 'lando.norris@hogent.be',
+        password_hash: passwordHash,
+        roles: ['admin', 'user'],
       },
       {
         id: 4,
         first_name: 'Oscar',
         last_name: 'Piastri',
         status: 'Active',
+        email: 'piastrioscar@hogent.be',
+        password_hash: passwordHash,
+        roles: ['admin', 'user'],
       },
       {
         id: 5,
         first_name: 'Charles',
         last_name: 'Leclerc',
         status: 'Active',
+        email: 'leclerc.charles@hogent.be',
+        password_hash: passwordHash,
+        roles: ['admin', 'user'],
       },
       {
         id: 6,
         first_name: 'Ayrton',
         last_name: 'Senna',
         status: 'Retired',
+        email: 'senna@hogent.be',
+        password_hash: passwordHash,
+        roles: ['admin', 'user'],
       },
       {
         id: 7,
         first_name: 'Michael',
         last_name: 'Schumacher',
         status: 'Retired',
+        email: 'michael.schum@hogent.be',
+        password_hash: passwordHash,
+        roles: ['admin', 'user'],
       },
       {
         id: 8,
         first_name: 'George',
         last_name: 'Russell',
         status: 'Active',
+        email: 'russ.george@hogent.be',
+        password_hash: passwordHash,
+        roles: ['admin', 'user'],
       },
     ],
   });
