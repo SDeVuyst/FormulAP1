@@ -29,15 +29,13 @@
 ## Projectbeschrijving
 
 > Omschrijf hier duidelijk waarover jouw project gaat. Voeg een domeinmodel (of EERD) toe om jouw entiteiten te verduidelijken.
+>
+Driver wordt als user gezien.
 
-## Screenshots
+![erd](images/erd.svg)
 
-> Voeg enkele (nuttige!) screenshots toe die tonen wat de app doet.
-> Dit is weinig zinvol indien je enkel Web Services volgt, verwijder dan deze sectie.
 
 ## API calls
-
-![ERD](<images/erd.png>)
 
 ### Driver
 - `GET /api/drivers`: alle drivers ophalen
@@ -129,7 +127,16 @@
 
 ### Web Services
 
-> Wat is de extra technologie? Hoe werkt het? Voeg een link naar het npm package toe!
+Ik heb gekozen om [apiDoc](https://www.npmjs.com/package/apidoc) te gebruiken in plaats van Swagger. Met apiDoc kan je makkelijk een documentatie pagina genereren via:
+```shell
+npx apidoc -i src/ -o docs/
+```
+Aangezien ik dit veel moest uitvoeren heb ik hiervan een script gemaakt in package.json, nu kan er nog gemakkelijker documentatie worden aangemaakt via:
+```shell
+yarn docs
+```
+De documentatie van de API routes worden beschreven in de rest-laag, door middel van specifieke comments. De documentatie bekijken kan via [/docs/index.html](docs/index.html)
+
 
 ## Gekende bugs
 
