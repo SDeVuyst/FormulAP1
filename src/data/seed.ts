@@ -1,6 +1,7 @@
 // src/data/seed.ts
 import { PrismaClient } from '@prisma/client';
 import { hashPassword } from '../core/password';
+import Role from '../core/roles';
 
 const prisma = new PrismaClient();
 
@@ -84,7 +85,7 @@ async function main() {
         status: 'Active',
         email: 'lewis.hamilton@hogent.be',
         password_hash: passwordHash,
-        roles: ['admin', 'user'],
+        roles: JSON.stringify([Role.USER]),
       },
       {
         id: 2,
@@ -93,7 +94,7 @@ async function main() {
         status: 'Active',
         email: 'verstappenm@hogent.be',
         password_hash: passwordHash,
-        roles: ['admin', 'user'],
+        roles: JSON.stringify([Role.USER]),
       },
       {
         id: 3,
@@ -102,7 +103,7 @@ async function main() {
         status: 'Active',
         email: 'lando.norris@hogent.be',
         password_hash: passwordHash,
-        roles: ['admin', 'user'],
+        roles: JSON.stringify([Role.USER]),
       },
       {
         id: 4,
@@ -111,7 +112,7 @@ async function main() {
         status: 'Active',
         email: 'piastrioscar@hogent.be',
         password_hash: passwordHash,
-        roles: ['admin', 'user'],
+        roles: JSON.stringify([Role.ADMIN, Role.USER]),
       },
       {
         id: 5,
@@ -120,7 +121,7 @@ async function main() {
         status: 'Active',
         email: 'leclerc.charles@hogent.be',
         password_hash: passwordHash,
-        roles: ['admin', 'user'],
+        roles: JSON.stringify([Role.ADMIN, Role.USER]),
       },
       {
         id: 6,
@@ -129,7 +130,7 @@ async function main() {
         status: 'Retired',
         email: 'senna@hogent.be',
         password_hash: passwordHash,
-        roles: ['admin', 'user'],
+        roles: JSON.stringify([Role.USER]),
       },
       {
         id: 7,
@@ -138,7 +139,7 @@ async function main() {
         status: 'Retired',
         email: 'michael.schum@hogent.be',
         password_hash: passwordHash,
-        roles: ['admin', 'user'],
+        roles: JSON.stringify([Role.USER]),
       },
       {
         id: 8,
@@ -147,7 +148,7 @@ async function main() {
         status: 'Active',
         email: 'russ.george@hogent.be',
         password_hash: passwordHash,
-        roles: ['admin', 'user'],
+        roles: JSON.stringify([Role.ADMIN, Role.USER]),
       },
     ],
   });

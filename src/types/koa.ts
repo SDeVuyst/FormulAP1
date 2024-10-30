@@ -1,6 +1,6 @@
 // src/types/koa.ts
 import type { ParameterizedContext } from 'koa';
-import type { SessionInfo } from '.';
+import type { SessionInfo } from './auth';
 import type Application from 'koa';
 import type Router from '@koa/router';
 

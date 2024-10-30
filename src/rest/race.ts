@@ -14,6 +14,7 @@ import type { IdParams } from '../types/common';
 import type { GetAllResultsResponse } from '../types/result';
 import validate from '../core/validation';
 import Joi from 'joi';
+import { requireAuthentication } from '../core/auth';
 
 /**
  * @api {get} /api/races Get all races
@@ -179,6 +180,9 @@ export default (parent: KoaRouter) => {
   const router = new Router<FormulaAppState, FormulaAppContext>({
     prefix: '/races',
   });
+
+  // TODO waar auth nodig?
+  router.use(requireAuthentication);
 
   router.get('/', validate(getAllRaces.validationScheme), getAllRaces);
   router.post('/', validate(createRace.validationScheme), createRace);

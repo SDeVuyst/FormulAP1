@@ -4,6 +4,7 @@ export default {
     disabled: false,
   },
   auth: {
+    maxDelay: 5000,
     jwt: {
       audience: 'formulapi.hogent.be',
       issuer: 'formulapi.hogent.be',
@@ -15,6 +16,9 @@ export default {
       hashLength: 32,
       timeCost: 6,
       memoryCost: 2 ** 17,
+    },
+    zxcvbn: {
+      minScore: 3,
     },
   },
 };

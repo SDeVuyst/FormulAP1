@@ -20,14 +20,48 @@ export interface DriverCreateInput {
   password: string;
 }
 
-export interface PublicDriver extends Pick<Driver, 'id' | 'email'> {}
+export interface PublicDriver extends Pick<Driver, 'id' | 'first_name' | 'last_name' | 'status' | 'email' > {}
 
 export interface DriverUpdateInput extends Pick<DriverCreateInput, 'email'> {}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface GetDriverRequest {
+  id: number | 'me';
+}
+
+export interface RegisterDriverRequest {
+  first_name: string;
+  last_name: string,
+  status: string|null,
+  email: string;
+  password: string;
+}
 
 export interface CreateDriverRequest extends DriverCreateInput {}
 export interface UpdateDriverRequest extends DriverUpdateInput {}
 
-export interface GetAllDriversResponse extends ListResponse<Driver> {}
-export interface GetDriverByIdResponse extends Driver {}
-export interface CreateDriverResponse extends GetDriverByIdResponse {}
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface GetDriverRequest {
+  id: number | 'me';
+}
+export interface RegisterDriverRequest {
+  email: string;
+  password: string;
+}
+export interface UpdateDriverRequest extends Pick<RegisterDriverRequest, 'email'> {}
+
+export interface GetAllDriversResponse extends ListResponse<PublicDriver> {}
+export interface GetDriverByIdResponse extends PublicDriver {}
 export interface UpdateDriverResponse extends GetDriverByIdResponse {}
+
+export interface LoginResponse {
+  token: string;
+}

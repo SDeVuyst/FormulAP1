@@ -16,6 +16,7 @@ import type {
 import type { IdParams } from '../types/common';
 import Joi from 'joi';
 import validate from '../core/validation';
+// import { requireAuthentication } from '../core/auth';
 
 // TODO: api docs @apiError 
 /**
@@ -182,6 +183,9 @@ export default (parent: KoaRouter) => {
   const router = new Router<FormulaAppState, FormulaAppContext>({
     prefix: '/circuits',
   });
+
+  // iedereen mag deze entiteit zien, en nieuwe aanmaken
+  // router.use(requireAuthentication);
 
   router.get('/', validate(getAllCircuits.validationScheme), getAllCircuits);
   router.post('/', validate(createCircuit.validationScheme), createCircuit);

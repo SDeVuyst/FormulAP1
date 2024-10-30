@@ -12,6 +12,7 @@ import type {
 import type { IdParams } from '../types/common';
 import validate from '../core/validation';
 import Joi from 'joi';
+import { requireAuthentication } from '../core/auth';
 
 /**
  * @api {get} /api/results Get all results
@@ -159,6 +160,9 @@ export default (parent: KoaRouter) => {
   const router = new Router<FormulaAppState, FormulaAppContext>({
     prefix: '/results',
   });
+
+  // todo waar auth nodig?
+  router.use(requireAuthentication);
 
   router.get('/', validate(getAllResults.validationScheme), getAllResults);
   router.post('/', validate(createResult.validationScheme), createResult);

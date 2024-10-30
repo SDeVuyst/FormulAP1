@@ -4,6 +4,7 @@ import installRaceRouter from './race';
 import installResultRouter from './result';
 import installDriverRouter from './driver';
 import installHealthRouter from './health';
+import installSessionRouter from './session';
 import type { FormulaAppContext, FormulaAppState, KoaApplication } from '../types/koa';
 
 export default (app: KoaApplication) => {
@@ -16,6 +17,7 @@ export default (app: KoaApplication) => {
   installResultRouter(router);
   installDriverRouter(router);
   installHealthRouter(router);
+  installSessionRouter(router);
 
   app.use(router.routes()).use(router.allowedMethods());
 };

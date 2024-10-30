@@ -125,6 +125,8 @@ Driver wordt als user gezien.
 
 ## Extra technologie
 
+1) zxcvbn wordt gebruikt als validator bovenop Joi om de sterkte van wachtwoorden te valideren.
+
 ### Web Services
 
 Ik heb gekozen om [apiDoc](https://www.npmjs.com/package/apidoc) te gebruiken in plaats van Swagger. Met apiDoc kan je makkelijk een documentatie pagina genereren via:
