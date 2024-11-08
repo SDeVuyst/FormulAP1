@@ -41,8 +41,20 @@ const checkDriverId = (ctx: KoaContext<unknown, GetDriverRequest>, next: Next) =
  * @apiGroup Driver
  * 
  * @apiSuccess {Driver[]} drivers List of drivers.
+ * @apiError (401) Unauthorized You must be logged in as Admin to see drivers.
  */
 const getAllDrivers = async (ctx: KoaContext<GetAllDriversResponse>) => {
+
+  const { roles } = ctx.state.session;
+
+  if (!roles.includes(Role.ADMIN)) {
+    return ctx.throw(
+      403,
+      'You must be logged in as admin to see drivers',
+      { code: 'FORBIDDEN' },
+    );
+  };
+
   const drivers = await driverService.getAll();
   ctx.body = {
     items: drivers,
@@ -99,8 +111,9 @@ registerDriver.validationScheme = {
  * 
  * @apiError (404) NotFound No driver with this id exists.
  * @apiError (400) BadRequest Invalid request.
+ * @apiError (401) Unauthorized You must be logged in as current driver or Admin to get a driver.
  */
-const getDriverById = async (ctx: KoaContext<GetDriverByIdResponse, GetDriverRequest>) => {
+const getDriverById = async (ctx: KoaContext<GetDriverByIdResponse, GetDriverRequest>) => {  
   const driver = await driverService.getById(
     ctx.params.id === 'me' ? ctx.state.session.userId : ctx.params.id,
   );
@@ -132,10 +145,12 @@ getDriverById.validationScheme = {
  * 
  * @apiError (404) NotFound No driver with this id exists.
  * @apiError (400) BadRequest Invalid request.
+ * @apiError (401) Unauthorized You must be logged in as current driver or Admin to update a driver.
  */
 const updateDriverById = async (
   ctx: KoaContext<UpdateDriverResponse, IdParams, UpdateDriverRequest>,
 ) => {
+  
   ctx.status = 200;
   ctx.body = await driverService.updateById(Number(ctx.params.id), ctx.request.body);
   
@@ -160,6 +175,7 @@ updateDriverById.validationScheme = {
  * @apiSuccess (204) NoContent The driver was successfully deleted and no content is returned.
  * 
  * @apiError (404) NotFound No driver with this id exists.
+ * @apiError (401) Unauthorized You must be logged in as current driver or Admin to delete a driver.
  */
 const deleteDriverById = async (ctx: KoaContext<void, IdParams>) => {
   await driverService.deleteById(Number(ctx.params.id));
@@ -182,11 +198,22 @@ deleteDriverById.validationScheme = {
  * @apiSuccess {Result[]} results List of results.
  * 
  * @apiError (404) NotFound No driver with this id exists.
+ * @apiError (401) Unauthorized You must be logged in as current driver or Admin to get results of a driver.
  */
 const getResultsByDriverId = async(ctx: KoaContext<GetAllResultsResponse, IdParams>) => {
-  const results = await resultService.getResultsByDriverId(
-    Number(ctx.params.id),
-  );
+
+  console.log(ctx.params.id);
+
+  const test = await resultService.getAll();
+  console.log(test);
+
+  const test2 = await driverService.getAll();
+  console.log(test2);
+
+  await driverService.checkDriverExists(Number(ctx.params.id));
+  
+  const results = await resultService.getResultsByDriverId(Number(ctx.params.id));
+
   ctx.status = 200;
   ctx.body = {
     items: results,
@@ -204,18 +231,11 @@ export default (parent: KoaRouter) => {
     prefix: '/drivers',
   });
 
-  router.post(
-    '/',
-    authDelay,
-    validate(registerDriver.validationScheme),
-    registerDriver,
-  );
-
+  router.use(requireAuthentication);
   const requireAdmin = makeRequireRole(Role.ADMIN);
 
   router.get(
     '/', 
-    requireAuthentication,
     requireAdmin,
     validate(getAllDrivers.validationScheme), 
     getAllDrivers,
@@ -223,17 +243,20 @@ export default (parent: KoaRouter) => {
 
   router.get(
     '/:id', 
-    requireAuthentication,
-    requireAdmin,
     validate(getDriverById.validationScheme), 
     checkDriverId,
     getDriverById,
   );
 
+  router.post(
+    '/',
+    authDelay,
+    validate(registerDriver.validationScheme),
+    registerDriver,
+  );
+
   router.put(
     '/:id', 
-    requireAuthentication,
-    requireAdmin,
     validate(updateDriverById.validationScheme), 
     checkDriverId,
     updateDriverById,
@@ -241,8 +264,6 @@ export default (parent: KoaRouter) => {
 
   router.delete(
     '/:id',
-    requireAuthentication,
-    requireAdmin, 
     validate(deleteDriverById.validationScheme), 
     checkDriverId,
     deleteDriverById,
@@ -250,8 +271,6 @@ export default (parent: KoaRouter) => {
 
   router.get(
     '/:id/results', 
-    requireAuthentication,
-    requireAdmin,
     validate(getResultsByDriverId.validationScheme), 
     checkDriverId,
     getResultsByDriverId,

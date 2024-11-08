@@ -193,6 +193,11 @@ const config: Config = {
 
   // Whether to use watchman for file crawling
   // watchman: true,
+  collectCoverageFrom: [
+    './src/service/**/*.ts',
+    './src/rest/**/*.ts',
+  ],
+  coverageDirectory: '__tests__/coverage'
 };
 
 export default config;

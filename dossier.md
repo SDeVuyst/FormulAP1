@@ -38,35 +38,41 @@ Driver wordt als user gezien.
 ## API calls
 
 ### Driver
-- `GET /api/drivers`: alle drivers ophalen
-- `GET /api/drivers/:id`: driver met een bepaald id ophalen
-- `GET /api/drivers/:id/results`: De resultaten van een driver met een bepaald id ophalen
-- `POST /api/drivers`: een nieuwe driver aanmaken
-- `PUT /api/drivers/:id`: een driver aanpassen
-- `DELETE /api/drivers/:id`: een driver met een bepaald id verwijderen
+- `GET /api/drivers`: alle drivers ophalen (auth en admin vereist)
+- `GET /api/drivers/:id`: driver met een bepaald id ophalen (auth vereist)
+- `GET /api/drivers/:id/results`: De resultaten van een driver met een bepaald id ophalen (auth vereist)
+- `POST /api/drivers`: een nieuwe driver aanmaken (auth vereist)
+- `PUT /api/drivers/:id`: een driver aanpassen (auth vereist)
+- `DELETE /api/drivers/:id`: een driver met een bepaald id verwijderen (auth vereist)
 
 ### Circuit
-- `GET /api/circuits`: alle circuits ophalen
-- `GET /api/circuits/:id`: circuit met een bepaald id ophalen
-- `GET /api/circuits/:id/races`: races op een circuit met een bepaald id ophalen
-- `POST /api/circuits`: een nieuw circuit aanmaken
-- `PUT /api/circuits/:id`: een circuit aanpassen
-- `DELETE /api/circuits/:id`: een circuit met een bepaald id verwijderen
+- `GET /api/circuits`: alle circuits ophalen (geen vereisten)
+- `GET /api/circuits/:id`: circuit met een bepaald id ophalen (geen vereisten)
+- `GET /api/circuits/:id/races`: races op een circuit met een bepaald id ophalen (geen vereisten)
+- `POST /api/circuits`: een nieuw circuit aanmaken (auth en admin vereist)
+- `PUT /api/circuits/:id`: een circuit aanpassen (auth en admin vereist)
+- `DELETE /api/circuits/:id`: een circuit met een bepaald id verwijderen (auth en admin vereist)
 
 ### Race
-- `GET /api/races`: alle races ophalen
-- `GET /api/races/:id`: races met een bepaald id ophalen
-- `GET /api/races/:id/results`: De resultaten van een race met een bepaald id ophalen
-- `POST /api/races`: een nieuwe race aanmaken
-- `PUT /api/races/:id`: een race aanpassen
-- `DELETE /api/races/:id`: een race met een bepaald id verwijderen
+- `GET /api/races`: alle races ophalen (geen vereisten)
+- `GET /api/races/:id`: races met een bepaald id ophalen (auth vereisten)
+- `GET /api/races/:id/results`: De resultaten van een race met een bepaald id ophalen (auth vereisten)
+- `POST /api/races`: een nieuwe race aanmaken (auth en admin vereist)
+- `PUT /api/races/:id`: een race aanpassen (auth en admin vereist)
+- `DELETE /api/races/:id`: een race met een bepaald id verwijderen (auth en admin vereist)
   
 ### Result
-- `GET /api/results`: alle results ophalen
-- `GET /api/results/:id`: result met een bepaald id ophalen
-- `POST /api/results`: een nieuwe result aanmaken
-- `PUT /api/results/:id`: een result aanpassen
-- `DELETE /api/results/:id`: een result met een bepaald id verwijderen
+- `GET /api/results`: alle results ophalen (auth vereisten)
+- `GET /api/results/:id`: result met een bepaald id ophalen (auth vereisten)
+- `POST /api/results`: een nieuwe result aanmaken (admin vereist)
+- `PUT /api/results/:id`: een result aanpassen (admin vereist)
+- `DELETE /api/results/:id`: een result met een bepaald id verwijderen (admin vereist)
+
+### Team
+# todo
+
+### Car
+# TODO 
   
 ## Behaalde minimumvereisten
 
