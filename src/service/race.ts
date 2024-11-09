@@ -77,9 +77,6 @@ export const updateById = async (id: number, {
       select: RACE_SELECT,
     });
   } catch (error: any) {
-    const { code = '', message } = error;
-    console.log(code);
-    console.log(message);
     throw handleDBError(error);
   }
 };

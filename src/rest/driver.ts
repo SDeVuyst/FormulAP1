@@ -202,14 +202,6 @@ deleteDriverById.validationScheme = {
  */
 const getResultsByDriverId = async(ctx: KoaContext<GetAllResultsResponse, IdParams>) => {
 
-  console.log(ctx.params.id);
-
-  const test = await resultService.getAll();
-  console.log(test);
-
-  const test2 = await driverService.getAll();
-  console.log(test2);
-
   await driverService.checkDriverExists(Number(ctx.params.id));
   
   const results = await resultService.getResultsByDriverId(Number(ctx.params.id));

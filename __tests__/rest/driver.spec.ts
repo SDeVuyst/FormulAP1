@@ -306,8 +306,6 @@ describe('Drivers', () => {
     it('should 200 and return results', async () => {
       const response = await request.get(`${url}/2/results`).set('Authorization', adminAuthHeader);
 
-      console.log(response.body);
-
       expect(response.statusCode).toBe(200);
       expect(response.body.items.length).toBe(2);
       expect(response.body.items).toEqual(expect.arrayContaining([{

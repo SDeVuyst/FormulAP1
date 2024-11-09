@@ -12,7 +12,8 @@ import type {
 import type { IdParams } from '../types/common';
 import validate from '../core/validation';
 import Joi from 'joi';
-import { requireAuthentication } from '../core/auth';
+import { requireAuthentication, makeRequireRole } from '../core/auth';
+import Role from '../core/roles';
 
 /**
  * @api {get} /api/results Get all results
@@ -22,7 +23,15 @@ import { requireAuthentication } from '../core/auth';
  * @apiSuccess {Result[]} results List of results.
  */
 const getAllResults = async (ctx: KoaContext<GetAllResultsResponse>) => {
-  const results = await resultService.getAll();
+  const { roles } = ctx.state.session;
+  let results;
+
+  if (roles.includes(Role.ADMIN)) {
+    results = await resultService.getAll();
+  } else {
+    results = await resultService.getResultsByDriverId(Number(ctx.state.session.userId));
+  }
+  
   ctx.body = {
     items: results,
   };
@@ -163,12 +172,40 @@ export default (parent: KoaRouter) => {
 
   // todo waar auth nodig?
   router.use(requireAuthentication);
+  const requireAdmin = makeRequireRole(Role.ADMIN);
 
-  router.get('/', validate(getAllResults.validationScheme), getAllResults);
-  router.post('/', validate(createResult.validationScheme), createResult);
-  router.get('/:id', validate(getResultById.validationScheme), getResultById);
-  router.put('/:id', validate(updateResult.validationScheme), updateResult);
-  router.delete('/:id', validate(deleteResult.validationScheme), deleteResult);
+  router.get(
+    '/', 
+    validate(getAllResults.validationScheme), 
+    getAllResults,
+  );
+
+  router.post(
+    '/', 
+    requireAdmin,
+    validate(createResult.validationScheme), 
+    createResult,
+  );
+
+  router.get(
+    '/:id', 
+    validate(getResultById.validationScheme), 
+    getResultById,
+  );
+
+  router.put(
+    '/:id', 
+    requireAdmin,
+    validate(updateResult.validationScheme), 
+    updateResult,
+  );
+
+  router.delete(
+    '/:id', 
+    requireAdmin,
+    validate(deleteResult.validationScheme), 
+    deleteResult,
+  );
 
   parent.use(router.routes()).use(router.allowedMethods());
 };

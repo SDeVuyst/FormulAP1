@@ -1,6 +1,7 @@
-import supertest from 'supertest';
-import createServer from '../../src/createServer';
-import type { Server } from '../../src/createServer';
+import type supertest from 'supertest';
+import withServer from '../helpers/withServer';
+import { login, loginAdmin } from '../helpers/login';
+import testAuthHeader from '../helpers/testAuthHeader';
 import { prisma } from '../../src/data';
 
 const data = {
@@ -20,27 +21,6 @@ const data = {
       date: new Date(2024, 7, 28, 14, 0),
       laps: 44,
       circuit_id: 1,
-    },
-  ],
-
-  drivers: [
-    {
-      id: 1,
-      first_name: 'Lewis',
-      last_name: 'Hamilton',
-      status: 'Active',
-    },
-    {
-      id: 2,
-      first_name: 'Max',
-      last_name: 'Verstappen',
-      status: 'Active',
-    },
-    {
-      id: 3,
-      first_name: 'Lando',
-      last_name: 'Norris',
-      status: 'Active',
     },
   ],
 
@@ -68,31 +48,28 @@ const data = {
 const dataToDelete = {
   circuits: [1],
   races: [1],
-  drivers: [1, 2, 3],
   results: [1, 2],
 };
 
 describe('Results', () => {
-  let server: Server;
   let request: supertest.Agent;
+  let authHeader: string;
+  let adminAuthHeader: string;
+
+  withServer((r) => (request = r));
 
   beforeAll(async () => {
-    server = await createServer();
-    request = supertest(server.getApp().callback());
+    authHeader = await login(request);
+    adminAuthHeader = await loginAdmin(request);
   });
 
-  afterAll(async () => {
-    await server.stop();
-  });
+  const url = '/api/results';
 
   // get all results
   describe('GET /api/results', () => {
 
-    const url = '/api/results';
-
     beforeAll(async () => {
       await prisma.circuit.createMany({ data: data.circuits });
-      await prisma.driver.createMany({ data: data.drivers });
       await prisma.race.createMany({ data: data.races });
       await prisma.result.createMany({ data: data.results });
     });
@@ -100,9 +77,6 @@ describe('Results', () => {
     afterAll(async () => {
       await prisma.result.deleteMany({
         where: { id: { in: dataToDelete.results } },
-      });
-      await prisma.driver.deleteMany({
-        where: { id: { in: dataToDelete.drivers } },
       });
       await prisma.race.deleteMany({
         where: { id: { in: dataToDelete.races } },
@@ -112,19 +86,29 @@ describe('Results', () => {
       });
     }); 
 
+    it('should 200 and return all results for the signed in user', async () => {
+      const response = await request.get(url).set('Authorization', authHeader);
+      expect(response.status).toBe(200);
+      expect(response.body.items.length).toBe(1);
+    });
+
     it('should 200 and return all results', async () => {
-      const response = await request.get(url);
+      const response = await request.get(url).set('Authorization', adminAuthHeader);
       expect(response.status).toBe(200);
       expect(response.body.items.length).toBe(2);
     });
 
     it('should 400 when given an argument', async () => {
-      const response = await request.get(`${url}?invalid=true`);
+      const response = await request.get(`${url}?invalid=true`).set('Authorization', authHeader);
 
       expect(response.statusCode).toBe(400);
       expect(response.body.code).toBe('VALIDATION_FAILED');
       expect(response.body.details.query).toHaveProperty('invalid');
+
     });
+
+    testAuthHeader(() => request.get(url));
+
   });
 
   // get result by id
@@ -134,7 +118,6 @@ describe('Results', () => {
 
     beforeAll(async () => {
       await prisma.circuit.createMany({ data: data.circuits });
-      await prisma.driver.createMany({ data: data.drivers });
       await prisma.race.createMany({ data: data.races });
       await prisma.result.createMany({ data: data.results });
     });
@@ -142,9 +125,6 @@ describe('Results', () => {
     afterAll(async () => {
       await prisma.result.deleteMany({
         where: { id: { in: dataToDelete.results } },
-      });
-      await prisma.driver.deleteMany({
-        where: { id: { in: dataToDelete.drivers } },
       });
       await prisma.race.deleteMany({
         where: { id: { in: dataToDelete.races } },
@@ -155,7 +135,7 @@ describe('Results', () => {
     }); 
 
     it('should 200 and return the requested result', async () => {
-      const response = await request.get(`${url}/1`);
+      const response = await request.get(`${url}/1`).set('Authorization', authHeader);
       expect(response.statusCode).toBe(200);
       expect(response.body).toEqual({
         id: 1,
@@ -172,7 +152,7 @@ describe('Results', () => {
     });
 
     it('should 404 with not existing result', async () => {
-      const response = await request.get(`${url}/123`);
+      const response = await request.get(`${url}/123`).set('Authorization', authHeader);
 
       expect(response.statusCode).toBe(404);
       expect(response.body).toMatchObject({
@@ -183,23 +163,22 @@ describe('Results', () => {
     });
 
     it('should 400 with result user id', async () => {
-      const response = await request.get(`${url}/invalid`);
+      const response = await request.get(`${url}/invalid`).set('Authorization', authHeader);
 
       expect(response.statusCode).toBe(400);
       expect(response.body.code).toBe('VALIDATION_FAILED');
       expect(response.body.details.params).toHaveProperty('id');
     });
 
+    testAuthHeader(() => request.get(`${url}/1`));
+
   });
 
   // add new result
   describe('POST /api/results', () => {
-    const resultsToDelete: number[] = [];
-    const url = '/api/results';
   
     beforeAll(async () => {
       await prisma.circuit.createMany({ data: data.circuits });
-      await prisma.driver.createMany({ data: data.drivers });
       await prisma.race.createMany({ data: data.races });
       await prisma.result.createMany({ data: data.results });
     });
@@ -208,15 +187,19 @@ describe('Results', () => {
       await prisma.result.deleteMany({
         where: { id: { in: dataToDelete.results } },
       });
-      await prisma.driver.deleteMany({
-        where: { id: { in: dataToDelete.drivers } },
-      });
       await prisma.race.deleteMany({
         where: { id: { in: dataToDelete.races } },
       });
       await prisma.circuit.deleteMany({
         where: { id: { in: dataToDelete.circuits } },
       });
+
+      await prisma.circuit.deleteMany({
+        where: {
+          id: 3,
+        },
+      });
+
     }); 
 
     it('should 201 and return the created result', async () => {
@@ -226,7 +209,7 @@ describe('Results', () => {
         status: 'DQ',
         race_id: 1,
         driver_id: 2,
-      });
+      }).set('Authorization', adminAuthHeader);
 
       expect(response.status).toBe(201);
       expect(response.body.id).toBeTruthy();
@@ -234,27 +217,24 @@ describe('Results', () => {
       expect(response.body.status).toEqual('DQ');
       expect(response.body.race.id).toEqual(1);
       expect(response.body.driver.id).toEqual(2);      
-      resultsToDelete.push(response.body.id);
     });
 
     it('should 400 with invalid route', async () => {
-      const response = await request.get(`${url}/invalid`);
+      const response = await request.get(`${url}/invalid`).set('Authorization', adminAuthHeader);
 
       expect(response.statusCode).toBe(400);
       expect(response.body.code).toBe('VALIDATION_FAILED');
       expect(response.body.details.params).toHaveProperty('id');
-    });
 
+    });
+    testAuthHeader(() => request.get(url));
   });
 
   // update existing result
   describe('PUT /api/results/:id', () => {
 
-    const url = '/api/results';
-
     beforeAll(async () => {
       await prisma.circuit.createMany({ data: data.circuits });
-      await prisma.driver.createMany({ data: data.drivers });
       await prisma.race.createMany({ data: data.races });
       await prisma.result.createMany({ data: data.results });
     });
@@ -263,9 +243,7 @@ describe('Results', () => {
       await prisma.result.deleteMany({
         where: { id: { in: dataToDelete.results } },
       });
-      await prisma.driver.deleteMany({
-        where: { id: { in: dataToDelete.drivers } },
-      });
+      
       await prisma.race.deleteMany({
         where: { id: { in: dataToDelete.races } },
       });
@@ -282,7 +260,7 @@ describe('Results', () => {
           status: 'FIN',
           race_id: 1,
           driver_id: 1,
-        });
+        }).set('Authorization', adminAuthHeader);
 
       expect(response.statusCode).toBe(200);
       expect(response.body.id).toEqual(1);
@@ -293,7 +271,7 @@ describe('Results', () => {
     });
 
     it('should 404 with not existing result', async () => {
-      const response = await request.get(`${url}/123`);
+      const response = await request.get(`${url}/123`).set('Authorization', adminAuthHeader);
 
       expect(response.statusCode).toBe(404);
       expect(response.body).toMatchObject({
@@ -301,25 +279,25 @@ describe('Results', () => {
         message: 'No result with this id exists',
       });
       expect(response.body.stack).toBeTruthy();
+
     });
 
     it('should 400 with invalid result id', async () => {
-      const response = await request.get(`${url}/invalid`);
+      const response = await request.get(`${url}/invalid`).set('Authorization', adminAuthHeader);
 
       expect(response.statusCode).toBe(400);
       expect(response.body.code).toBe('VALIDATION_FAILED');
       expect(response.body.details.params).toHaveProperty('id');
+
     });
 
+    testAuthHeader(() => request.get(`${url}/1`));
   });
 
   describe('DELETE /api/results/:id', () => {
 
-    const url = '/api/results';
-
     beforeAll(async () => {
       await prisma.circuit.createMany({ data: data.circuits });
-      await prisma.driver.createMany({ data: data.drivers });
       await prisma.race.createMany({ data: data.races });
       await prisma.result.createMany({ data: data.results });
     });
@@ -327,9 +305,6 @@ describe('Results', () => {
     afterAll(async () => {
       await prisma.result.deleteMany({
         where: { id: { in: dataToDelete.results } },
-      });
-      await prisma.driver.deleteMany({
-        where: { id: { in: dataToDelete.drivers } },
       });
       await prisma.race.deleteMany({
         where: { id: { in: dataToDelete.races } },
@@ -340,14 +315,14 @@ describe('Results', () => {
     }); 
 
     it('should 204 and return nothing', async () => {
-      const response = await request.delete(`${url}/1`);
+      const response = await request.delete(`${url}/1`).set('Authorization', adminAuthHeader);
 
       expect(response.statusCode).toBe(204);
       expect(response.body).toEqual({});
     });
 
     it('should 404 with not existing result', async () => {
-      const response = await request.delete(`${url}/123`);
+      const response = await request.delete(`${url}/123`).set('Authorization', adminAuthHeader);
 
       expect(response.statusCode).toBe(404);
       expect(response.body).toMatchObject({
@@ -356,6 +331,8 @@ describe('Results', () => {
       });
       expect(response.body.stack).toBeTruthy();
     });
+
+    testAuthHeader(() => request.get(`${url}/1`));
 
   });
   
