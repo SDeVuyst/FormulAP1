@@ -315,7 +315,6 @@ describe('Circuits', () => {
       await prisma.circuit.deleteMany({ where: { id: { in: dataToDelete.circuits } } });
     });
 
-    // TODO: fix
     it('should 200 and return the races of the given circuit', async () => {
       const response = await request.get(`${url}/1/races`);
 

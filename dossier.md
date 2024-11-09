@@ -55,7 +55,7 @@ Driver wordt als user gezien.
 
 ### Race
 - `GET /api/races`: alle races ophalen (geen vereisten)
-- `GET /api/races/:id`: races met een bepaald id ophalen (auth vereisten)
+- `GET /api/races/:id`: races met een bepaald id ophalen (geen vereisten)
 - `GET /api/races/:id/results`: De resultaten van een race met een bepaald id ophalen (auth vereisten)
 - `POST /api/races`: een nieuwe race aanmaken (auth en admin vereist)
 - `PUT /api/races/:id`: een race aanpassen (auth en admin vereist)

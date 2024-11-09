@@ -23,6 +23,8 @@ import Role from '../core/roles';
  * @apiGroup Race
  * 
  * @apiSuccess {Races[]} races List of races.
+ * 
+ * @apiError (400) BadRequest This route does not accept any arguments
  */
 const getAllRaces = async (ctx: KoaContext<GetAllRacesResponse>) => {
   const races = await raceService.getAll();
@@ -50,7 +52,9 @@ getAllRaces.validationScheme = null;
  * 
  * @apiError (404) NotFound No race with this id exists.
  * @apiError (400) BadRequest Invalid request.
- * @apiError (401) Unauthorized You must be logged in as Admin to add a Race.
+ * @apiError (403) Forbidden You must be logged in as Admin to add a Race.
+ * @apiError (401) Unauthorized No authorization token provided
+ * @apiError (401) Unauthorized Invalid authorization token provided
  */
 const createRace = async (ctx: KoaContext<CreateRaceResponse, void, CreateRaceRequest>) => {
   const newRace = await raceService.create(ctx.request.body);
@@ -114,7 +118,9 @@ getRaceById.validationScheme = {
  * 
  * @apiError (404) NotFound No race with this id exists.
  * @apiError (400) BadRequest Invalid request.
- * @apiError (401) Unauthorized You must be logged in as Admin to update a Race.
+ * @apiError (403) Forbidden You must be logged in as Admin to update a Race.
+ * @apiError (401) Unauthorized No authorization token provided
+ * @apiError (401) Unauthorized Invalid authorization token provided
  */
 const updateRace = async (
   ctx: KoaContext<UpdateRaceResponse, IdParams, UpdateRaceRequest>,
@@ -141,7 +147,9 @@ updateRace.validationScheme = {
  * @apiSuccess (204) NoContent The race was successfully deleted and no content is returned.
  * 
  * @apiError (404) NotFound No race with this id exists.
- * @apiError (401) Unauthorized You must be logged in as Admin to delete a Race.
+ * @apiError (403) Forbidden You must be logged in as Admin to delete a Race.
+ * @apiError (401) Unauthorized No authorization token provided
+ * @apiError (401) Unauthorized Invalid authorization token provided
  */
 const deleteRace = async (ctx: KoaContext<void, IdParams>) => {
   await raceService.deleteById(Number(ctx.params.id));
@@ -156,8 +164,6 @@ deleteRace.validationScheme = {
 
 /**
  * @api {get} /api/races/:id/results Get results by race Id
- * @apiDescription This route gets the result of the currently authorized driver. 
- * If logged in as admin, it gets all the results # TODO
  * @apiName GetResultsByRace
  * @apiGroup Race
  * 
@@ -166,7 +172,9 @@ deleteRace.validationScheme = {
  * @apiSuccess {Result[]} results List of results.
  * 
  * @apiError (404) NotFound No race with this id exists.
- * @apiError (401) Unauthorized You must be logged in as Admin to see Results.
+ * @apiError (403) Forbidden You must be logged in as Admin to see Results.
+ * @apiError (401) Unauthorized No authorization token provided
+ * @apiError (401) Unauthorized Invalid authorization token provided
  */
 const getResultsByRaceId = async(ctx: KoaContext<GetAllResultsResponse, IdParams>) => {
 

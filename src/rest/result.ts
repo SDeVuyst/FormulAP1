@@ -21,6 +21,10 @@ import Role from '../core/roles';
  * @apiGroup Result
  * 
  * @apiSuccess {Result[]} results List of results.
+ * 
+ * @apiError (400) BadRequest This route does not accept any arguments.
+ * @apiError (401) Unauthorized No authorization token provided
+ * @apiError (401) Unauthorized Invalid authorization token provided
  */
 const getAllResults = async (ctx: KoaContext<GetAllResultsResponse>) => {
   const { roles } = ctx.state.session;
@@ -58,6 +62,8 @@ getAllResults.validationScheme = null;
  * 
  * @apiError (404) NotFound No race with this id exists.
  * @apiError (400) BadRequest Invalid race id.
+ * @apiError (401) Unauthorized No authorization token provided
+ * @apiError (401) Unauthorized Invalid authorization token provided
  */
 const createResult = async (ctx: KoaContext<CreateResultResponse, void, CreateResultRequest>) => {
   const newResult = await resultService.create(ctx.request.body);
@@ -91,6 +97,8 @@ createResult.validationScheme = {
  * 
  * @apiError (404) NotFound No race with this id exists.
  * @apiError (400) BadRequest Invalid race id.
+ * @apiError (401) Unauthorized No authorization token provided
+ * @apiError (401) Unauthorized Invalid authorization token provided
  */
 const getResultById = async (ctx: KoaContext<GetResultByIdResponse, IdParams>) => {
   const result = await resultService.getById(Number(ctx.params.id));
@@ -104,7 +112,7 @@ getResultById.validationScheme = {
 };
 
 /**
- * @api {post} /api/results/:id Update result by Id
+ * @api {put} /api/results/:id Update result by Id
  * @apiName UpdateResultById
  * @apiGroup Result
  * 
@@ -125,6 +133,8 @@ getResultById.validationScheme = {
  * 
  * @apiError (404) NotFound No race with this id exists.
  * @apiError (400) BadRequest Invalid race id.
+ * @apiError (401) Unauthorized No authorization token provided
+ * @apiError (401) Unauthorized Invalid authorization token provided
  */
 const updateResult = async (
   ctx: KoaContext<UpdateResultResponse, IdParams, UpdateResultRequest>,
@@ -153,6 +163,8 @@ updateResult.validationScheme = {
  * @apiSuccess (204) NoContent The result was successfully deleted and no content is returned.
  * 
  * @apiError (404) NotFound No result with this id exists.
+ * @apiError (401) Unauthorized No authorization token provided
+ * @apiError (401) Unauthorized Invalid authorization token provided
  */
 const deleteResult = async (ctx: KoaContext<void, IdParams>) => {
   await resultService.deleteById(Number(ctx.params.id));
@@ -170,7 +182,6 @@ export default (parent: KoaRouter) => {
     prefix: '/results',
   });
 
-  // todo waar auth nodig?
   router.use(requireAuthentication);
   const requireAdmin = makeRequireRole(Role.ADMIN);
 

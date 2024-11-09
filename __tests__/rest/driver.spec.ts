@@ -210,6 +210,8 @@ describe('Drivers', () => {
       expect(response.statusCode).toBe(200);
       expect(response.body.token).toBeDefined();
     });
+
+    testAuthHeader(() => request.post(url));
   });
 
   // update existing driver
@@ -302,7 +304,6 @@ describe('Drivers', () => {
       await prisma.circuit.deleteMany({ where: { id: { in: dataToDelete.circuits } } });
     });
 
-    // todo get results zonder admin
     it('should 200 and return results', async () => {
       const response = await request.get(`${url}/2/results`).set('Authorization', adminAuthHeader);
 

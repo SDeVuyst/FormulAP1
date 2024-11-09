@@ -41,7 +41,10 @@ const checkDriverId = (ctx: KoaContext<unknown, GetDriverRequest>, next: Next) =
  * @apiGroup Driver
  * 
  * @apiSuccess {Driver[]} drivers List of drivers.
- * @apiError (401) Unauthorized You must be logged in as Admin to see drivers.
+ * @apiError (400) Bad Request Invalid argument
+ * @apiError (401) Unauthorized No authorization token provided
+ * @apiError (401) Unauthorized Invalid authorization token provided
+ * @apiError (403) Forbidden You must be logged in as Admin to see drivers.
  */
 const getAllDrivers = async (ctx: KoaContext<GetAllDriversResponse>) => {
 
@@ -80,6 +83,8 @@ getAllDrivers.validationScheme = null;
  * @apiSuccess {Boolean} active If driver is active in the current grid.
  * 
  * @apiError (400) BadRequest Invalid request.
+ * @apiError (401) Unauthorized No authorization token provided
+ * @apiError (401) Unauthorized Invalid authorization token provided
  */
 const registerDriver = async (ctx: KoaContext<LoginResponse, void, RegisterDriverRequest>) => {
   const token = await driverService.register(ctx.request.body);
@@ -111,7 +116,9 @@ registerDriver.validationScheme = {
  * 
  * @apiError (404) NotFound No driver with this id exists.
  * @apiError (400) BadRequest Invalid request.
- * @apiError (401) Unauthorized You must be logged in as current driver or Admin to get a driver.
+ * @apiError (403) Forbidden You must be logged in as current driver or Admin to get a driver.
+ * @apiError (401) Unauthorized No authorization token provided
+ * @apiError (401) Unauthorized Invalid authorization token provided
  */
 const getDriverById = async (ctx: KoaContext<GetDriverByIdResponse, GetDriverRequest>) => {  
   const driver = await driverService.getById(
@@ -145,7 +152,9 @@ getDriverById.validationScheme = {
  * 
  * @apiError (404) NotFound No driver with this id exists.
  * @apiError (400) BadRequest Invalid request.
- * @apiError (401) Unauthorized You must be logged in as current driver or Admin to update a driver.
+ * @apiError (403) Forbidden You must be logged in as current driver or Admin to update a driver.
+ * @apiError (401) Unauthorized No authorization token provided
+ * @apiError (401) Unauthorized Invalid authorization token provided
  */
 const updateDriverById = async (
   ctx: KoaContext<UpdateDriverResponse, IdParams, UpdateDriverRequest>,
@@ -175,7 +184,9 @@ updateDriverById.validationScheme = {
  * @apiSuccess (204) NoContent The driver was successfully deleted and no content is returned.
  * 
  * @apiError (404) NotFound No driver with this id exists.
- * @apiError (401) Unauthorized You must be logged in as current driver or Admin to delete a driver.
+ * @apiError (403) Forbidden You must be logged in as current driver or Admin to delete a driver.
+ * @apiError (401) Unauthorized No authorization token provided
+ * @apiError (401) Unauthorized Invalid authorization token provided
  */
 const deleteDriverById = async (ctx: KoaContext<void, IdParams>) => {
   await driverService.deleteById(Number(ctx.params.id));
@@ -198,7 +209,10 @@ deleteDriverById.validationScheme = {
  * @apiSuccess {Result[]} results List of results.
  * 
  * @apiError (404) NotFound No driver with this id exists.
- * @apiError (401) Unauthorized You must be logged in as current driver or Admin to get results of a driver.
+ * @apiError (403) Forbidden You must be logged in as current driver or Admin to get results of a driver.
+ * @apiError (400) Bad Request Invalid User Id
+ * @apiError (401) Unauthorized No authorization token provided
+ * @apiError (401) Unauthorized Invalid authorization token provided
  */
 const getResultsByDriverId = async(ctx: KoaContext<GetAllResultsResponse, IdParams>) => {
 

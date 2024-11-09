@@ -52,8 +52,11 @@ getAllCircuits.validationScheme = null;
  * @apiSuccess {String} country Circuit country.
  * @apiSuccess {Boolean} active If circuit is active in the F1 Calendar.\
  * 
- * @apiError (400) BadRequest Incorrect request.
- * @apiError (401) Unauthorized You must be logged in as Admin to add a Circuit. # TODO
+ * @apiError (400) BadRequest Invalid route.
+ * @apiError (400) BadRequest duplicate circuit name
+ * @apiError (401) Unauthorized No authorization token provided
+ * @apiError (401) Unauthorized Invalid authorization token provided
+ * @apiError (403) Forbidden You must be logged in as Admin to add a Circuit.
  */
 const createCircuit = async (ctx: KoaContext<CreateCircuitResponse, void, CreateCircuitRequest>) => {
   const newCircuit = await circuitService.create(ctx.request.body);
@@ -83,6 +86,7 @@ createCircuit.validationScheme = {
  * @apiSuccess {String{..255}} country Circuit country.
  * @apiSuccess {Boolean} active If circuit is active in the F1 Calendar.
  * 
+ * @apiError (400) Bad Request Invalid circuit id
  * @apiError (404) NotFound No circuit with this id exists.
  */
 const getCircuitById = async (ctx: KoaContext<GetCircuitByIdResponse, IdParams>) => {
@@ -112,9 +116,13 @@ getCircuitById.validationScheme = {
  * @apiSuccess {String} city Circuit city.
  * @apiSuccess {String} country Circuit country.
  * @apiSuccess {Boolean} active If the circuit is active in the F1 Calendar. 
+ * 
  * @apiError (404) NotFound No circuit with this id exists.
- * @apiError (400) BadRequest Invalid request.
- * @apiError (401) Unauthorized You must be logged in as Admin to update a Circuit.
+ * @apiError (400) BadRequest Invalid circuit id.
+ * @apiError (400) BadRequest Duplicate circuit name.
+ * @apiError (401) Unauthorized No authorization token provided
+ * @apiError (401) Unauthorized Invalid authorization token provided
+ * @apiError (403) Forbidden You must be logged in as Admin to update a Circuit.
  */
 const updateCircuit = async (
   ctx: KoaContext<UpdateCircuitResponse, IdParams, UpdateCircuitRequest>,
@@ -142,7 +150,9 @@ updateCircuit.validationScheme = {
  * @apiSuccess (204) NoContent The circuit was successfully deleted and no content is returned.
  * 
  * @apiError (404) NotFound No circuit with this id exists.
- * @apiError (401) Unauthorized You must be logged in as Admin to delete a Circuit.
+ * @apiError (403) Forbidden You must be logged in as Admin to delete a Circuit.
+ * @apiError (401) Unauthorized No authorization token provided
+ * @apiError (401) Unauthorized Invalid authorization token provided
  */
 const deleteCircuit = async (ctx: KoaContext<void, IdParams>) => {
   await circuitService.deleteById(Number(ctx.params.id));
@@ -164,6 +174,7 @@ deleteCircuit.validationScheme = {
  * 
  * @apiSuccess {Races[]} races List of races.
  * 
+ * @apiError (400) BadRequest Invalid circuit id
  * @apiError (404) NotFound No circuit with this id exists.
  */
 const getRacesByCircuitId = async(ctx: KoaContext<GetAllRacesResponse, IdParams>) => {
