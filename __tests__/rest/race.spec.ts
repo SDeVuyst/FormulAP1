@@ -1,6 +1,7 @@
-import supertest from 'supertest';
-import createServer from '../../src/createServer';
-import type { Server } from '../../src/createServer';
+import type supertest from 'supertest';
+import withServer from '../helpers/withServer';
+import { login, loginAdmin } from '../helpers/login';
+import testAuthHeader from '../helpers/testAuthHeader';
 import { prisma } from '../../src/data';
 
 const data = {
@@ -36,21 +37,6 @@ const data = {
     },
   ],
 
-  drivers: [
-    {
-      id: 1,
-      first_name: 'Lewis',
-      last_name: 'Hamilton',
-      status: 'Active',
-    },
-    {
-      id: 2,
-      first_name: 'Max',
-      last_name: 'Verstappen',
-      status: 'Active',
-    },
-  ],
-
   results: [
     {
       id: 1,
@@ -74,36 +60,38 @@ const data = {
 const dataToDelete = {
   circuits: [1, 2],
   races: [1, 2],
-  drivers: [1, 2],
   results: [1, 2],
 };
 
 describe('Races', () => {
-  let server: Server;
   let request: supertest.Agent;
+  let authHeader: string;
+  let adminAuthHeader: string;
+
+  withServer((r) => (request = r));
 
   beforeAll(async () => {
-    server = await createServer();
-    request = supertest(server.getApp().callback());
+    authHeader = await login(request);
+    adminAuthHeader = await loginAdmin(request);
   });
 
-  afterAll(async () => {
-    await server.stop();
-  });
+  const url = '/api/races';
 
   // get all races
   describe('GET /api/races', () => {
 
-    const url = '/api/races';
-
     beforeAll(async () => {
       await prisma.circuit.createMany({ data: data.circuits });
       await prisma.race.createMany({ data: data.races });
+      await prisma.result.createMany({ data: data.results });
     });
-
+  
     afterAll(async () => {
+      await prisma.result.deleteMany({
+        where: { id: { in: dataToDelete.results } },
+      });
       await prisma.race.deleteMany({
-        where: { id: { in: dataToDelete.races } }, 
+        where: { id: { in: dataToDelete.races } },
       });
       await prisma.circuit.deleteMany({
         where: { id: { in: dataToDelete.circuits } },
@@ -128,14 +116,16 @@ describe('Races', () => {
   // get race by id
   describe('GET /api/races/:id', () => {
 
-    const url = '/api/races';
-
     beforeAll(async () => {
       await prisma.circuit.createMany({ data: data.circuits });
       await prisma.race.createMany({ data: data.races });
+      await prisma.result.createMany({ data: data.results });
     });
-
+  
     afterAll(async () => {
+      await prisma.result.deleteMany({
+        where: { id: { in: dataToDelete.results } },
+      });
       await prisma.race.deleteMany({
         where: { id: { in: dataToDelete.races } },
       });
@@ -181,34 +171,38 @@ describe('Races', () => {
 
   // add new race
   describe('POST /api/races', () => {
-    const racesToDelete: number[] = [];
-    const url = '/api/races';
-  
+
     beforeAll(async () => {
       await prisma.circuit.createMany({ data: data.circuits });
       await prisma.race.createMany({ data: data.races });
+      await prisma.result.createMany({ data: data.results });
     });
-
+  
     afterAll(async () => {
+      await prisma.result.deleteMany({
+        where: { id: { in: dataToDelete.results } },
+      });
       await prisma.race.deleteMany({
         where: { id: { in: dataToDelete.races } },
       });
-
-      await prisma.race.deleteMany({
-        where: { id: { in: racesToDelete } },
-      });
-
       await prisma.circuit.deleteMany({
         where: { id: { in: dataToDelete.circuits } },
       });
-    }); 
+
+      await prisma.race.deleteMany({
+        where: {
+          id: 3,
+        },
+      });
+
+    });
 
     it('should 201 and return the created race', async () => {
       const response = await request.post(url).send({
         date: '2021-05-27T13:00:00.000Z',
         laps: 72,
         circuit_id: 1,
-      });
+      }).set('Authorization', adminAuthHeader);
 
       expect(response.status).toBe(201);
       expect(response.body.id).toBeTruthy();
@@ -218,30 +212,33 @@ describe('Races', () => {
         id: 1,
         name: 'Circuit de Spa-Francorchamps',
       });
-      racesToDelete.push(response.body.id);
     });
 
     it('should 400 with invalid route', async () => {
-      const response = await request.get(`${url}/invalid`);
+      const response = await request.get(`${url}/invalid`).set('Authorization', adminAuthHeader);;
 
       expect(response.statusCode).toBe(400);
       expect(response.body.code).toBe('VALIDATION_FAILED');
       expect(response.body.details.params).toHaveProperty('id');
     });
 
+    testAuthHeader(() => request.post(url));
+
   });
 
   // update existing race
   describe('PUT /api/races/:id', () => {
 
-    const url = '/api/races';
-
     beforeAll(async () => {
       await prisma.circuit.createMany({ data: data.circuits });
       await prisma.race.createMany({ data: data.races });
+      await prisma.result.createMany({ data: data.results });
     });
-
+  
     afterAll(async () => {
+      await prisma.result.deleteMany({
+        where: { id: { in: dataToDelete.results } },
+      });
       await prisma.race.deleteMany({
         where: { id: { in: dataToDelete.races } },
       });
@@ -256,7 +253,7 @@ describe('Races', () => {
           date: '2021-05-27T13:00:00.000Z',
           laps: 45,
           circuit_id: 2,
-        });
+        }).set('Authorization', adminAuthHeader);
 
       expect(response.statusCode).toBe(200);
       expect(response.body.id).toEqual(1);
@@ -270,7 +267,13 @@ describe('Races', () => {
     });
 
     it('should 404 with not existing race', async () => {
-      const response = await request.get(`${url}/123`);
+      const response = await request.put(`${url}/123`)
+        .send({
+          date: '2021-05-27T13:00:00.000Z',
+          laps: 45,
+          circuit_id: 1,
+        })
+        .set('Authorization', adminAuthHeader);
 
       expect(response.statusCode).toBe(404);
       expect(response.body).toMatchObject({
@@ -281,25 +284,29 @@ describe('Races', () => {
     });
 
     it('should 400 with invalid race id', async () => {
-      const response = await request.get(`${url}/invalid`);
+      const response = await request.put(`${url}/invalid`).set('Authorization', adminAuthHeader);
 
       expect(response.statusCode).toBe(400);
       expect(response.body.code).toBe('VALIDATION_FAILED');
       expect(response.body.details.params).toHaveProperty('id');
     });
 
+    testAuthHeader(() => request.put(`${url}/1`));
+
   });
 
   describe('DELETE /api/races/:id', () => {
 
-    const url = '/api/races';
-
     beforeAll(async () => {
       await prisma.circuit.createMany({ data: data.circuits });
       await prisma.race.createMany({ data: data.races });
+      await prisma.result.createMany({ data: data.results });
     });
-
+  
     afterAll(async () => {
+      await prisma.result.deleteMany({
+        where: { id: { in: dataToDelete.results } },
+      });
       await prisma.race.deleteMany({
         where: { id: { in: dataToDelete.races } },
       });
@@ -309,14 +316,14 @@ describe('Races', () => {
     }); 
 
     it('should 204 and return nothing', async () => {
-      const response = await request.delete(`${url}/1`);
+      const response = await request.delete(`${url}/1`).set('Authorization', adminAuthHeader);
 
       expect(response.statusCode).toBe(204);
       expect(response.body).toEqual({});
     });
 
     it('should 404 with not existing race', async () => {
-      const response = await request.delete(`${url}/123`);
+      const response = await request.delete(`${url}/123`).set('Authorization', adminAuthHeader);
 
       expect(response.statusCode).toBe(404);
       expect(response.body).toMatchObject({
@@ -326,25 +333,21 @@ describe('Races', () => {
       expect(response.body.stack).toBeTruthy();
     });
 
+    testAuthHeader(() => request.delete(`${url}/1`));
+
   });
   
   describe('GET /api/races/:id/results', () => {
-    
-    const url = '/api/races';
 
     beforeAll(async () => {
       await prisma.circuit.createMany({ data: data.circuits });
       await prisma.race.createMany({ data: data.races });
-      await prisma.driver.createMany({ data: data.drivers });
       await prisma.result.createMany({ data: data.results });
     });
-
+  
     afterAll(async () => {
       await prisma.result.deleteMany({
         where: { id: { in: dataToDelete.results } },
-      });
-      await prisma.driver.deleteMany({
-        where: { id: { in: dataToDelete.drivers } },
       });
       await prisma.race.deleteMany({
         where: { id: { in: dataToDelete.races } },
@@ -355,7 +358,7 @@ describe('Races', () => {
     }); 
 
     it('should 200 and return the results of the given driver', async () => {
-      const response = await request.get(`${url}/1/results`);
+      const response = await request.get(`${url}/1/results`).set('Authorization', authHeader);
 
       expect(response.statusCode).toBe(200);
       expect(response.body.items.length).toBe(2);
@@ -381,12 +384,14 @@ describe('Races', () => {
     });
 
     it('should 400 with invalid race id', async () => {
-      const response = await request.get(`${url}/invalid/results`);
+      const response = await request.get(`${url}/invalid/results`).set('Authorization', authHeader);
 
       expect(response.statusCode).toBe(400);
       expect(response.body.code).toBe('VALIDATION_FAILED');
       expect(response.body.details.params).toHaveProperty('id');
     });
+
+    testAuthHeader(() => request.get(`${url}/1/results`));
 
   });
 });

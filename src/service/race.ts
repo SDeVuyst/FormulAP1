@@ -61,9 +61,8 @@ export const create = async ({
 };
 
 export const updateById = async (id: number, { 
-  date, 
-  laps, 
-  circuit_id,
+  date, laps, circuit_id,
+
 }: RaceUpdateInput): Promise<Race> => {
   try {
     return await prisma.race.update({
@@ -77,7 +76,10 @@ export const updateById = async (id: number, {
       },
       select: RACE_SELECT,
     });
-  } catch (error) {
+  } catch (error: any) {
+    const { code = '', message } = error;
+    console.log(code);
+    console.log(message);
     throw handleDBError(error);
   }
 };

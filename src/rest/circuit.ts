@@ -16,9 +16,9 @@ import type {
 import type { IdParams } from '../types/common';
 import Joi from 'joi';
 import validate from '../core/validation';
-// import { requireAuthentication } from '../core/auth';
+import { requireAuthentication, makeRequireRole } from '../core/auth';
+import Role from '../core/roles';
 
-// TODO: api docs @apiError 
 /**
  * @api {get} /api/circuits Get all circuits
  * @apiName GetCircuits
@@ -53,6 +53,7 @@ getAllCircuits.validationScheme = null;
  * @apiSuccess {Boolean} active If circuit is active in the F1 Calendar.\
  * 
  * @apiError (400) BadRequest Incorrect request.
+ * @apiError (401) Unauthorized You must be logged in as Admin to add a Circuit. # TODO
  */
 const createCircuit = async (ctx: KoaContext<CreateCircuitResponse, void, CreateCircuitRequest>) => {
   const newCircuit = await circuitService.create(ctx.request.body);
@@ -83,7 +84,6 @@ createCircuit.validationScheme = {
  * @apiSuccess {Boolean} active If circuit is active in the F1 Calendar.
  * 
  * @apiError (404) NotFound No circuit with this id exists.
- * @apiError (400) BadRequest Invalid circuit id.
  */
 const getCircuitById = async (ctx: KoaContext<GetCircuitByIdResponse, IdParams>) => {
   const circuit = await circuitService.getById(ctx.params.id);
@@ -114,6 +114,7 @@ getCircuitById.validationScheme = {
  * @apiSuccess {Boolean} active If the circuit is active in the F1 Calendar. 
  * @apiError (404) NotFound No circuit with this id exists.
  * @apiError (400) BadRequest Invalid request.
+ * @apiError (401) Unauthorized You must be logged in as Admin to update a Circuit.
  */
 const updateCircuit = async (
   ctx: KoaContext<UpdateCircuitResponse, IdParams, UpdateCircuitRequest>,
@@ -141,6 +142,7 @@ updateCircuit.validationScheme = {
  * @apiSuccess (204) NoContent The circuit was successfully deleted and no content is returned.
  * 
  * @apiError (404) NotFound No circuit with this id exists.
+ * @apiError (401) Unauthorized You must be logged in as Admin to delete a Circuit.
  */
 const deleteCircuit = async (ctx: KoaContext<void, IdParams>) => {
   await circuitService.deleteById(Number(ctx.params.id));
@@ -184,15 +186,49 @@ export default (parent: KoaRouter) => {
     prefix: '/circuits',
   });
 
-  // iedereen mag deze entiteit zien, en nieuwe aanmaken
-  // router.use(requireAuthentication);
+  const requireAdmin = makeRequireRole(Role.ADMIN);
 
-  router.get('/', validate(getAllCircuits.validationScheme), getAllCircuits);
-  router.post('/', validate(createCircuit.validationScheme), createCircuit);
-  router.get('/:id', validate(getCircuitById.validationScheme), getCircuitById);
-  router.put('/:id', validate(updateCircuit.validationScheme), updateCircuit);
-  router.delete('/:id', validate(deleteCircuit.validationScheme), deleteCircuit);
-  router.get('/:id/races', validate(getRacesByCircuitId.validationScheme), getRacesByCircuitId);
+  router.get(
+    '/',
+    validate(getAllCircuits.validationScheme), 
+    getAllCircuits,
+  );
+
+  router.post(
+    '/', 
+    requireAuthentication,
+    requireAdmin,
+    validate(createCircuit.validationScheme), 
+    createCircuit,
+  );
+
+  router.get(
+    '/:id', 
+    validate(getCircuitById.validationScheme), 
+    getCircuitById,
+  );
+
+  router.put(
+    '/:id', 
+    requireAuthentication,
+    requireAdmin,
+    validate(updateCircuit.validationScheme),
+    updateCircuit,
+  );
+
+  router.delete(
+    '/:id', 
+    requireAuthentication,
+    requireAdmin,
+    validate(deleteCircuit.validationScheme), 
+    deleteCircuit,
+  );
+
+  router.get(
+    '/:id/races', 
+    validate(getRacesByCircuitId.validationScheme), 
+    getRacesByCircuitId,
+  );
 
   parent.use(router.routes()).use(router.allowedMethods());
 };

@@ -14,7 +14,8 @@ import type { IdParams } from '../types/common';
 import type { GetAllResultsResponse } from '../types/result';
 import validate from '../core/validation';
 import Joi from 'joi';
-import { requireAuthentication } from '../core/auth';
+import { requireAuthentication, makeRequireRole } from '../core/auth';
+import Role from '../core/roles';
 
 /**
  * @api {get} /api/races Get all races
@@ -49,6 +50,7 @@ getAllRaces.validationScheme = null;
  * 
  * @apiError (404) NotFound No race with this id exists.
  * @apiError (400) BadRequest Invalid request.
+ * @apiError (401) Unauthorized You must be logged in as Admin to add a Race.
  */
 const createRace = async (ctx: KoaContext<CreateRaceResponse, void, CreateRaceRequest>) => {
   const newRace = await raceService.create(ctx.request.body);
@@ -112,6 +114,7 @@ getRaceById.validationScheme = {
  * 
  * @apiError (404) NotFound No race with this id exists.
  * @apiError (400) BadRequest Invalid request.
+ * @apiError (401) Unauthorized You must be logged in as Admin to update a Race.
  */
 const updateRace = async (
   ctx: KoaContext<UpdateRaceResponse, IdParams, UpdateRaceRequest>,
@@ -138,6 +141,7 @@ updateRace.validationScheme = {
  * @apiSuccess (204) NoContent The race was successfully deleted and no content is returned.
  * 
  * @apiError (404) NotFound No race with this id exists.
+ * @apiError (401) Unauthorized You must be logged in as Admin to delete a Race.
  */
 const deleteRace = async (ctx: KoaContext<void, IdParams>) => {
   await raceService.deleteById(Number(ctx.params.id));
@@ -152,6 +156,8 @@ deleteRace.validationScheme = {
 
 /**
  * @api {get} /api/races/:id/results Get results by race Id
+ * @apiDescription This route gets the result of the currently authorized driver. 
+ * If logged in as admin, it gets all the results # TODO
  * @apiName GetResultsByRace
  * @apiGroup Race
  * 
@@ -160,11 +166,13 @@ deleteRace.validationScheme = {
  * @apiSuccess {Result[]} results List of results.
  * 
  * @apiError (404) NotFound No race with this id exists.
+ * @apiError (401) Unauthorized You must be logged in as Admin to see Results.
  */
 const getResultsByRaceId = async(ctx: KoaContext<GetAllResultsResponse, IdParams>) => {
-  const results = await resultService.getResultsByRaceId(
-    Number(ctx.params.id),
-  );
+
+  await raceService.checkRaceExists(Number(ctx.params.id));
+
+  const results = await resultService.getResultsByRaceId(Number(ctx.params.id));
   ctx.body = {
     items: results,
   };
@@ -181,15 +189,50 @@ export default (parent: KoaRouter) => {
     prefix: '/races',
   });
 
-  // TODO waar auth nodig?
-  router.use(requireAuthentication);
+  const requireAdmin = makeRequireRole(Role.ADMIN);
 
-  router.get('/', validate(getAllRaces.validationScheme), getAllRaces);
-  router.post('/', validate(createRace.validationScheme), createRace);
-  router.get('/:id', validate(getRaceById.validationScheme), getRaceById);
-  router.put('/:id', validate(updateRace.validationScheme), updateRace);
-  router.delete('/:id', validate(deleteRace.validationScheme), deleteRace);
-  router.get('/:id/results', validate(getResultsByRaceId.validationScheme), getResultsByRaceId);
+  router.get(
+    '/', 
+    validate(getAllRaces.validationScheme), 
+    getAllRaces,
+  );
+
+  router.get(
+    '/:id', 
+    validate(getRaceById.validationScheme), 
+    getRaceById,
+  );
+
+  router.post(
+    '/', 
+    requireAuthentication,
+    requireAdmin,
+    validate(createRace.validationScheme), 
+    createRace,
+  );
+
+  router.put(
+    '/:id', 
+    requireAuthentication,
+    requireAdmin,
+    validate(updateRace.validationScheme), 
+    updateRace,
+  );
+
+  router.delete(
+    '/:id', 
+    requireAuthentication,
+    requireAdmin,
+    validate(deleteRace.validationScheme), 
+    deleteRace,
+  );
+
+  router.get(
+    '/:id/results', 
+    requireAuthentication,
+    validate(getResultsByRaceId.validationScheme), 
+    getResultsByRaceId,
+  );
 
   parent.use(router.routes()).use(router.allowedMethods());
 };
