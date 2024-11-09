@@ -4,6 +4,66 @@ import { login, loginAdmin } from '../helpers/login';
 import testAuthHeader from '../helpers/testAuthHeader';
 import { prisma } from '../../src/data';
 
+const data ={
+  circuits: [
+    {
+      id: 1,
+      name: 'Circuit de Spa-Francorchamps',
+      city: 'Stavelot',
+      country: 'Belgium',
+      active: true,
+    },
+    {
+      id: 2,
+      name: 'Circuit of The Americas',
+      city: 'Austin',
+      country: 'USA',
+      active: true,
+    },
+  ],
+
+  races: [
+    {
+      id: 1,
+      date: new Date(2024, 7, 28, 14, 0),
+      laps: 44,
+      circuit_id: 1,
+    },
+    {
+      id: 2,
+      date: new Date(2023, 7, 28, 14, 0),
+      laps: 44,
+      circuit_id: 1,
+    },
+  ],
+
+  results: [
+    {
+      id: 1,
+      position: 1,
+      points: 25,
+      status: 'FIN',
+      race_id: 1,
+      driver_id: 2,
+    },
+    {
+      id: 2,
+      position: 3,
+      points: 15,
+      status: 'FIN',
+      race_id: 2,
+      driver_id: 2,
+    },
+  ],
+
+};
+
+const dataToDelete = {
+  circuits: [1, 2],
+  races: [1, 2],
+  results: [1, 2],
+};
+
 describe('Drivers', () => {
   let request: supertest.Agent;
   let authHeader: string;
@@ -229,6 +289,18 @@ describe('Drivers', () => {
   });
 
   describe('GET /api/drivers/:id/results', () => {
+
+    beforeAll(async () => {
+      await prisma.circuit.createMany({ data: data.circuits });
+      await prisma.race.createMany({ data: data.races });
+      await prisma.result.createMany({ data: data.results });      
+    });
+
+    afterAll(async () => {
+      await prisma.result.deleteMany({ where: { id: { in: dataToDelete.results } } });
+      await prisma.race.deleteMany({ where: { id: { in: dataToDelete.races } } });
+      await prisma.circuit.deleteMany({ where: { id: { in: dataToDelete.circuits } } });
+    });
 
     // todo get results zonder admin
     it('should 200 and return results', async () => {
