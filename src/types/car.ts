@@ -12,7 +12,7 @@ export interface CarCreateInput {
   model: string;
   weight: number;
   year: number;
-  team_id: number
+  team_id: number;
 }
 
 export interface CarUpdateInput extends CarCreateInput {}

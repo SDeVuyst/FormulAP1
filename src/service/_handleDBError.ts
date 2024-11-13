@@ -31,6 +31,8 @@ const handleDBError = (error: any) => {
         throw ServiceError.notFound('This driver does not exist');
       case message.includes('fk_race_circuit'):
         throw ServiceError.notFound('This circuit does not exist');
+      case message.includes('fk_car_team'):
+        throw ServiceError.notFound('This team does not exist');
 
       // models
       case message.includes('circuit'):
@@ -43,6 +45,8 @@ const handleDBError = (error: any) => {
         throw ServiceError.notFound('No driver with this id exists');
       case message.includes('team'):
         throw ServiceError.notFound('No team with this id exists');
+      case message.includes('car'):
+        throw ServiceError.notFound('No car with this id exists');
     }
   }
 
@@ -67,4 +71,4 @@ const handleDBError = (error: any) => {
   throw error;
 };
 
-export default handleDBError; // 👈 1
+export default handleDBError;
