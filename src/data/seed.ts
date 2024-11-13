@@ -72,6 +72,25 @@ async function main() {
     ],
   });
 
+  // Seed teams
+  // =================
+  await prisma.team.createMany({
+    data: [
+      {
+        id: 1,
+        name: 'RedBull Racing',
+        country: 'Austria',
+        join_date: new Date(2017, 1, 1, 0, 0),
+      },
+      {
+        id: 2,
+        name: 'Ferrari',
+        country: 'Italy',
+        join_date: new Date(1997, 1, 1, 0, 0),
+      },
+    ],
+  });
+
   // Seed drivers
   // ===========
   const passwordHash = await hashPassword('12345678');
@@ -86,6 +105,7 @@ async function main() {
         email: 'lewis.hamilton@hogent.be',
         password_hash: passwordHash,
         roles: JSON.stringify([Role.USER]),
+        team_id: 2,
       },
       {
         id: 2,
@@ -95,6 +115,7 @@ async function main() {
         email: 'verstappenm@hogent.be',
         password_hash: passwordHash,
         roles: JSON.stringify([Role.USER]),
+        team_id: 1,
       },
       {
         id: 3,
@@ -122,6 +143,7 @@ async function main() {
         email: 'leclerc.charles@hogent.be',
         password_hash: passwordHash,
         roles: JSON.stringify([Role.ADMIN, Role.USER]),
+        team_id: 2,
       },
       {
         id: 6,
@@ -140,6 +162,7 @@ async function main() {
         email: 'michael.schum@hogent.be',
         password_hash: passwordHash,
         roles: JSON.stringify([Role.USER]),
+        team_id: 2,
       },
       {
         id: 8,
@@ -149,6 +172,34 @@ async function main() {
         email: 'russ.george@hogent.be',
         password_hash: passwordHash,
         roles: JSON.stringify([Role.ADMIN, Role.USER]),
+      },
+    ],
+  });
+
+  // Seed cars
+  // =================
+  await prisma.car.createMany({
+    data: [
+      {
+        id: 1,
+        model: 'model1',
+        weight: 1104.6,
+        year: 2014,
+        team_id: 1,
+      },
+      {
+        id: 2,
+        model: 'model2',
+        weight: 1110.54,
+        year: 2012,
+        team_id: 2,
+      },
+      {
+        id: 3,
+        model: 'model3',
+        weight: 996.8,
+        year: 1997,
+        team_id: 2,
       },
     ],
   });
@@ -165,6 +216,7 @@ async function main() {
         status: 'FIN',
         race_id: 3,
         driver_id: 1,
+        car_id: 1,
       },
       {
         id: 2,
@@ -173,6 +225,7 @@ async function main() {
         status: 'DQ',
         race_id: 3,
         driver_id: 8,
+        car_id: 2,
       },
       {
         id: 3,
@@ -181,17 +234,11 @@ async function main() {
         status: 'FIN',
         race_id: 3,
         driver_id: 4,
+        car_id: 3,
       },
     ],
   });
 
-  // Seed teams
-  // =================
-  // TODO
-
-  // Seed cars
-  // =================
-  // TODO
 }
 
 main()
