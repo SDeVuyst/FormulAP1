@@ -31,7 +31,6 @@
 > Omschrijf hier duidelijk waarover jouw project gaat. Voeg een domeinmodel (of EERD) toe om jouw entiteiten te verduidelijken.
 >
 Driver wordt als user gezien.
-
 ![erd](images/erd.svg)
 
 
