@@ -1,6 +1,7 @@
 import type { Entity, ListResponse } from './common';
 import type { Race } from './race';
 import type { Driver } from './driver';
+import type { Car } from './car';
 
 export interface Result extends Entity {
   position: number;
@@ -8,6 +9,7 @@ export interface Result extends Entity {
   status: string | null;
   race: Pick<Race, 'id'>;
   driver: Pick<Driver, 'id'>;
+  car: Pick<Car, 'id'>;
 }
 
 export interface ResultCreateInput {
@@ -16,6 +18,7 @@ export interface ResultCreateInput {
   status: string | null;
   race_id: number;
   driver_id: number;
+  car_id: number
 }
 
 export interface ResultUpdateInput extends ResultCreateInput {}

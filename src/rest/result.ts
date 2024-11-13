@@ -78,6 +78,7 @@ createResult.validationScheme = {
     status: Joi.string().max(255).optional(),
     race_id: Joi.number().integer().positive(),
     driver_id: Joi.number().integer().positive(),
+    car_id: Joi.number().integer().positive(),
   },
 };
 
@@ -150,6 +151,7 @@ updateResult.validationScheme = {
     status: Joi.string().max(255).optional(),
     race_id: Joi.number().integer().positive(),
     driver_id: Joi.number().integer().positive(),
+    car_id: Joi.number().integer().positive(),
   },
 };
 

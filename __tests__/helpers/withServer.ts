@@ -45,6 +45,8 @@ export default function withServer(setter: (s: supertest.Agent) => void): void {
     await prisma.race.deleteMany();
     await prisma.result.deleteMany();
     await prisma.driver.deleteMany();
+    await prisma.team.deleteMany();
+    await prisma.car.deleteMany();
 
     await server.stop();
   });

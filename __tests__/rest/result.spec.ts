@@ -24,6 +24,25 @@ const data = {
     },
   ],
 
+  teams: [
+    {
+      id: 1,
+      name: 'RedBull Racing',
+      country: 'Austria',
+      join_date: new Date(2017, 1, 1, 0, 0),
+    },
+  ],
+
+  cars: [
+    {
+      id: 1,
+      model: 'model1',
+      weight: 1104.6,
+      year: 2014,
+      team_id: 1,
+    },
+  ],
+
   results: [
     // SPA 2024 RACE
     {
@@ -33,6 +52,7 @@ const data = {
       status: 'FIN',
       race_id: 1,
       driver_id: 1,
+      car_id: 1,
     },
     {
       id: 2,
@@ -41,6 +61,7 @@ const data = {
       status: 'FIN',
       race_id: 1,
       driver_id: 2,
+      car_id: 1,
     },
   ],
 };
@@ -48,6 +69,8 @@ const data = {
 const dataToDelete = {
   circuits: [1],
   races: [1],
+  teams: [1],
+  cars: [1],
   results: [1, 2],
 };
 
@@ -69,8 +92,10 @@ describe('Results', () => {
   describe('GET /api/results', () => {
 
     beforeAll(async () => {
+      await prisma.team.createMany({ data: data.teams });
       await prisma.circuit.createMany({ data: data.circuits });
       await prisma.race.createMany({ data: data.races });
+      await prisma.car.createMany({ data: data.cars });
       await prisma.result.createMany({ data: data.results });
     });
 
@@ -80,6 +105,12 @@ describe('Results', () => {
       });
       await prisma.race.deleteMany({
         where: { id: { in: dataToDelete.races } },
+      });
+      await prisma.car.deleteMany({
+        where: { id: { in: dataToDelete.cars } },
+      });
+      await prisma.team.deleteMany({
+        where: { id: { in: dataToDelete.teams } },
       });
       await prisma.circuit.deleteMany({
         where: { id: { in: dataToDelete.circuits } },
@@ -117,8 +148,10 @@ describe('Results', () => {
     const url = '/api/results';
 
     beforeAll(async () => {
+      await prisma.team.createMany({ data: data.teams });
       await prisma.circuit.createMany({ data: data.circuits });
       await prisma.race.createMany({ data: data.races });
+      await prisma.car.createMany({ data: data.cars });
       await prisma.result.createMany({ data: data.results });
     });
 
@@ -128,6 +161,12 @@ describe('Results', () => {
       });
       await prisma.race.deleteMany({
         where: { id: { in: dataToDelete.races } },
+      });
+      await prisma.car.deleteMany({
+        where: { id: { in: dataToDelete.cars } },
+      });
+      await prisma.team.deleteMany({
+        where: { id: { in: dataToDelete.teams } },
       });
       await prisma.circuit.deleteMany({
         where: { id: { in: dataToDelete.circuits } },
@@ -139,6 +178,9 @@ describe('Results', () => {
       expect(response.statusCode).toBe(200);
       expect(response.body).toEqual({
         id: 1,
+        car: {
+          id: 1,
+        },
         driver: {
           id: 1,
         },
@@ -178,8 +220,10 @@ describe('Results', () => {
   describe('POST /api/results', () => {
   
     beforeAll(async () => {
+      await prisma.team.createMany({ data: data.teams });
       await prisma.circuit.createMany({ data: data.circuits });
       await prisma.race.createMany({ data: data.races });
+      await prisma.car.createMany({ data: data.cars });
       await prisma.result.createMany({ data: data.results });
     });
 
@@ -189,6 +233,12 @@ describe('Results', () => {
       });
       await prisma.race.deleteMany({
         where: { id: { in: dataToDelete.races } },
+      });
+      await prisma.car.deleteMany({
+        where: { id: { in: dataToDelete.cars } },
+      });
+      await prisma.team.deleteMany({
+        where: { id: { in: dataToDelete.teams } },
       });
       await prisma.circuit.deleteMany({
         where: { id: { in: dataToDelete.circuits } },
@@ -209,6 +259,7 @@ describe('Results', () => {
         status: 'DQ',
         race_id: 1,
         driver_id: 2,
+        car_id: 1,
       }).set('Authorization', adminAuthHeader);
 
       expect(response.status).toBe(201);
@@ -216,7 +267,8 @@ describe('Results', () => {
       expect(response.body.position).toEqual(21);
       expect(response.body.status).toEqual('DQ');
       expect(response.body.race.id).toEqual(1);
-      expect(response.body.driver.id).toEqual(2);      
+      expect(response.body.driver.id).toEqual(2);
+      expect(response.body.car.id) .toEqual(1);
     });
 
     it('should 400 with invalid route', async () => {
@@ -234,8 +286,10 @@ describe('Results', () => {
   describe('PUT /api/results/:id', () => {
 
     beforeAll(async () => {
+      await prisma.team.createMany({ data: data.teams });
       await prisma.circuit.createMany({ data: data.circuits });
       await prisma.race.createMany({ data: data.races });
+      await prisma.car.createMany({ data: data.cars });
       await prisma.result.createMany({ data: data.results });
     });
 
@@ -243,9 +297,14 @@ describe('Results', () => {
       await prisma.result.deleteMany({
         where: { id: { in: dataToDelete.results } },
       });
-      
       await prisma.race.deleteMany({
         where: { id: { in: dataToDelete.races } },
+      });
+      await prisma.car.deleteMany({
+        where: { id: { in: dataToDelete.cars } },
+      });
+      await prisma.team.deleteMany({
+        where: { id: { in: dataToDelete.teams } },
       });
       await prisma.circuit.deleteMany({
         where: { id: { in: dataToDelete.circuits } },
@@ -260,6 +319,7 @@ describe('Results', () => {
           status: 'FIN',
           race_id: 1,
           driver_id: 1,
+          car_id: 1,
         }).set('Authorization', adminAuthHeader);
 
       expect(response.statusCode).toBe(200);
@@ -297,8 +357,10 @@ describe('Results', () => {
   describe('DELETE /api/results/:id', () => {
 
     beforeAll(async () => {
+      await prisma.team.createMany({ data: data.teams });
       await prisma.circuit.createMany({ data: data.circuits });
       await prisma.race.createMany({ data: data.races });
+      await prisma.car.createMany({ data: data.cars });
       await prisma.result.createMany({ data: data.results });
     });
 
@@ -308,6 +370,12 @@ describe('Results', () => {
       });
       await prisma.race.deleteMany({
         where: { id: { in: dataToDelete.races } },
+      });
+      await prisma.car.deleteMany({
+        where: { id: { in: dataToDelete.cars } },
+      });
+      await prisma.team.deleteMany({
+        where: { id: { in: dataToDelete.teams } },
       });
       await prisma.circuit.deleteMany({
         where: { id: { in: dataToDelete.circuits } },

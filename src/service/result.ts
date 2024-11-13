@@ -21,6 +21,11 @@ const RESULT_SELECT = {
       id: true,
     },
   },
+  car: {
+    select: {
+      id: true,
+    },
+  },
 };
 
 export const getAll = async (): Promise<Result[]> => {
@@ -50,6 +55,7 @@ export const create = async ({
   status, 
   race_id, 
   driver_id,
+  car_id,
 }: ResultCreateInput): Promise<Result> => {
   try {
 
@@ -63,6 +69,7 @@ export const create = async ({
         status, 
         race_id: race_id, 
         driver_id: driver_id,
+        car_id: car_id,
       },
       select: RESULT_SELECT,
     });
@@ -77,6 +84,7 @@ export const updateById = async ( id: number, {
   status, 
   race_id, 
   driver_id,
+  car_id,
 }: ResultUpdateInput): Promise<Result> => {
   try {
     return await prisma.result.update({
@@ -89,6 +97,7 @@ export const updateById = async ( id: number, {
         status, 
         race_id: race_id, 
         driver_id: driver_id,
+        car_id: car_id,
       },
       select: RESULT_SELECT,
     });

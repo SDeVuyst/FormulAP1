@@ -22,6 +22,25 @@ const data ={
     },
   ],
 
+  teams: [
+    {
+      id: 1,
+      name: 'RedBull Racing',
+      country: 'Austria',
+      join_date: new Date(2017, 1, 1, 0, 0),
+    },
+  ],
+
+  cars: [
+    {
+      id: 1,
+      model: 'model1',
+      weight: 1104.6,
+      year: 2014,
+      team_id: 1,
+    },
+  ],
+
   races: [
     {
       id: 1,
@@ -45,6 +64,7 @@ const data ={
       status: 'FIN',
       race_id: 1,
       driver_id: 2,
+      car_id: 1,
     },
     {
       id: 2,
@@ -53,6 +73,7 @@ const data ={
       status: 'FIN',
       race_id: 2,
       driver_id: 2,
+      car_id: 1,
     },
   ],
 
@@ -60,6 +81,8 @@ const data ={
 
 const dataToDelete = {
   circuits: [1, 2],
+  teams: [1],
+  cars: [1],
   races: [1, 2],
   results: [1, 2],
 };
@@ -295,11 +318,15 @@ describe('Drivers', () => {
     beforeAll(async () => {
       await prisma.circuit.createMany({ data: data.circuits });
       await prisma.race.createMany({ data: data.races });
+      await prisma.team.createMany({ data: data.teams });
+      await prisma.car.createMany({ data: data.cars });
       await prisma.result.createMany({ data: data.results });      
     });
 
     afterAll(async () => {
       await prisma.result.deleteMany({ where: { id: { in: dataToDelete.results } } });
+      await prisma.car.deleteMany({ where: { id: { in: dataToDelete.cars } } });
+      await prisma.team.deleteMany({ where: { id: { in: dataToDelete.teams } } });      
       await prisma.race.deleteMany({ where: { id: { in: dataToDelete.races } } });
       await prisma.circuit.deleteMany({ where: { id: { in: dataToDelete.circuits } } });
     });
@@ -316,6 +343,7 @@ describe('Drivers', () => {
         status: 'FIN',
         race: { id: 1 },
         driver: { id: 2 },
+        car: { id: 1 },
       },
       {
         id: 2,
@@ -323,7 +351,8 @@ describe('Drivers', () => {
         points: 15,
         status: 'FIN',
         race: { id: 2 },
-        driver: { id: 2},
+        driver: { id: 2 },
+        car: { id: 1 },
       }]));
     });
 
