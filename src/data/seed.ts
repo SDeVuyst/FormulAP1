@@ -184,6 +184,14 @@ async function main() {
       },
     ],
   });
+
+  // Seed teams
+  // =================
+  // TODO
+
+  // Seed cars
+  // =================
+  // TODO
 }
 
 main()

@@ -37,7 +37,7 @@ Driver wordt als user gezien.
 
 ## API calls
 
-### Driver
+### Driver (User)
 - `GET /api/drivers`: alle drivers ophalen (auth en admin vereist)
 - `GET /api/drivers/:id`: driver met een bepaald id ophalen (auth vereist)
 - `GET /api/drivers/:id/results`: De resultaten van een driver met een bepaald id ophalen (auth vereist)
@@ -69,10 +69,21 @@ Driver wordt als user gezien.
 - `DELETE /api/results/:id`: een result met een bepaald id verwijderen (admin vereist)
 
 ### Team
-# todo
+- `GET /api/teams`: alle results ophalen (auth vereisten)
+- `GET /api/teams/:id`: result met een bepaald id ophalen (auth vereisten)
+- `GET /api/teams/:id/drivers`: drivers van een bepaals team ophalen (admin vereist) todo
+- `GET /api/teams/:id/cars`: cars van een bepaals team ophalen (auth vereist) todo
+- `POST /api/teams`: een nieuwe result aanmaken (admin vereist)
+- `PUT /api/teams/:id`: een result aanpassen (admin vereist)
+- `DELETE /api/teams/:id`: een result met een bepaald id verwijderen (admin vereist)
 
 ### Car
-# TODO 
+- `GET /api/cars`: alle results ophalen (auth vereisten)
+- `GET /api/cars/:id`: result met een bepaald id ophalen (auth vereisten)
+- `GET /api/cars/:id/cars`: results van een bepaals team ophalen (auth vereist)
+- `POST /api/cars`: een nieuwe result aanmaken (admin vereist)
+- `PUT /api/cars/:id`: een result aanpassen (admin vereist)
+- `DELETE /api/cars/:id`: een result met een bepaald id verwijderen (admin vereist)
   
 ## Behaalde minimumvereisten
 

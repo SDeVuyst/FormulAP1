@@ -55,10 +55,40 @@ model Driver {
   first_name        String       @db.VarChar(255)
   last_name         String       @db.VarChar(255)
   status            String?      @db.VarChar(255)
+  team_id           Int?         @db.UnsignedInt
+  team              Team?        @relation(fields: [team_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_driver_team")
+
   // for login
   email         String         @unique(map: "idx_driver_email_unique") @db.VarChar(255)
   password_hash String         @db.VarChar(255)
   roles         Json
 
   results Result[]
+  // cars Car[]
 }
+
+model Team {
+  @@map("teams")
+
+  id          Int          @id @default(autoincrement()) @db.UnsignedInt
+  name        String       @unique(map: "idx_team_name_unique") @db.VarChar(255)
+  country     String?      @db.VarChar(255)
+  join_date   DateTime     @db.DateTime(0)
+  
+  drivers Driver[]
+  // cars Car[]
+}
+
+// model Car {
+//   @@map("cars")
+
+//   id          Int          @id @default(autoincrement()) @db.UnsignedInt
+//   model       String       @db.VarChar(255)
+//   weight      Float        @db.Float
+//   year        Int          @db.UnsignedInt
+
+//   driver_id   Int?         @db.UnsignedInt
+//   team_id     Int          @db.UnsignedInt
+//   driver      Driver?      @relation(fields: [driver_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_car_driver")
+//   team        Team         @relation(fields: [team_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_car_team")
+// }

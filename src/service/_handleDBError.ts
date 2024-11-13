@@ -11,6 +11,12 @@ const handleDBError = (error: any) => {
         throw ServiceError.validationFailed(
           'A circuit with this name already exists',
         );
+
+      case message.includes('idx_team_name_unique'):
+        throw ServiceError.validationFailed(
+          'A team with this name already exists',
+        );
+
       default:
         throw ServiceError.validationFailed('This item already exists');
     }
@@ -35,6 +41,8 @@ const handleDBError = (error: any) => {
         throw ServiceError.notFound('No result with this id exists');
       case message.includes('driver'):
         throw ServiceError.notFound('No driver with this id exists');
+      case message.includes('team'):
+        throw ServiceError.notFound('No team with this id exists');
     }
   }
 
