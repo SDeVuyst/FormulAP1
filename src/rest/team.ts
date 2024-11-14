@@ -1,5 +1,7 @@
 import Router from '@koa/router';
 import * as teamService from '../service/team';
+import * as driverService from '../service/driver';
+import * as carService from '../service/car';
 import type { FormulaAppContext, FormulaAppState, KoaContext, KoaRouter } from '../types/koa';
 import type { 
   CreateTeamRequest, 
@@ -10,6 +12,8 @@ import type {
   UpdateTeamResponse,
 } from '../types/team';
 import type { IdParams } from '../types/common';
+import type { GetAllDriversResponse } from '../types/driver';
+import type { GetAllCarsResponse } from '../types/car';
 import Joi from 'joi';
 import validate from '../core/validation';
 import { requireAuthentication, makeRequireRole } from '../core/auth';
@@ -155,6 +159,65 @@ deleteTeam.validationScheme = {
   },
 };
 
+/**
+ * @api {get} /api/teams/:id/drivers Get drivers by team Id
+ * @apiName GetDriversByTeam
+ * @apiGroup Team
+ * 
+ * @apiParam {Int} id Team unique ID (URL parameter).
+ * 
+ * @apiSuccess {Driver[]} drivers List of drivers.
+ * 
+ * @apiError (404) NotFound No team with this id exists.
+ * @apiError (403) Forbidden You must be logged in as Admin to see Drivers.
+ * @apiError (401) Unauthorized No authorization token provided
+ * @apiError (401) Unauthorized Invalid authorization token provided
+ */
+const getDriversByTeamId = async(ctx: KoaContext<GetAllDriversResponse, IdParams>) => {
+
+  await teamService.checkTeamExists(Number(ctx.params.id));
+
+  const results = await driverService.getDriversByTeamId(Number(ctx.params.id));
+  ctx.body = {
+    items: results,
+  };
+};
+
+getDriversByTeamId.validationScheme = {
+  params: {
+    id: Joi.number().integer().positive(),
+  },
+};
+
+/**
+ * @api {get} /api/teams/:id/cars Get cars by team Id
+ * @apiName GetCarsByTeam
+ * @apiGroup Team
+ * 
+ * @apiParam {Int} id Team unique ID (URL parameter).
+ * 
+ * @apiSuccess {Car[]} cars List of cars.
+ * 
+ * @apiError (404) NotFound No team with this id exists.
+ * @apiError (401) Unauthorized No authorization token provided
+ * @apiError (401) Unauthorized Invalid authorization token provided
+ */
+const getCarsByTeamId = async(ctx: KoaContext<GetAllCarsResponse, IdParams>) => {
+
+  await teamService.checkTeamExists(Number(ctx.params.id));
+
+  const results = await carService.getCarsByTeamId(Number(ctx.params.id));
+  ctx.body = {
+    items: results,
+  };
+};
+
+getCarsByTeamId.validationScheme = {
+  params: {
+    id: Joi.number().integer().positive(),
+  },
+};
+
 export default (parent: KoaRouter) => {
   const router = new Router<FormulaAppState, FormulaAppContext>({
     prefix: '/teams',
@@ -195,6 +258,19 @@ export default (parent: KoaRouter) => {
     requireAdmin,
     validate(deleteTeam.validationScheme), 
     deleteTeam,
+  );
+
+  router.get(
+    '/:id/drivers',
+    requireAdmin,
+    validate(getDriversByTeamId.validationScheme),
+    getDriversByTeamId,
+  );
+
+  router.get(
+    '/:id/cars',
+    validate(getCarsByTeamId.validationScheme),
+    getCarsByTeamId,
   );
 
   parent.use(router.routes()).use(router.allowedMethods());

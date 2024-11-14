@@ -99,3 +99,14 @@ export const checkCarExists = async (id: number) => {
     throw ServiceError.notFound('No car with this id exists');
   }
 };
+
+export const getCarsByTeamId = async (team_id: number): Promise<Car[]> => {
+  return await prisma.car.findMany({
+    where: {
+      AND: [
+        { team_id: team_id },
+      ],
+    },
+    select: CAR_SELECT,
+  });
+};

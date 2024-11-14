@@ -10,12 +10,13 @@ import type { Driver, DriverCreateInput, DriverUpdateInput, PublicDriver } from 
 import type { SessionInfo } from '../types/auth';
 import handleDBError from './_handleDBError';
 
-const makeExposedDriver = ({ id, first_name, last_name, status, email }: Driver): PublicDriver => ({
+const makeExposedDriver = ({ id, first_name, last_name, status, email, team}: Driver): PublicDriver => ({
   id,
   first_name,
   last_name,
   status,
   email,
+  team,
 });
 
 export const checkAndParseSession = async (
@@ -171,5 +172,23 @@ export const checkDriverExists = async (id: number) => {
 
   if (count === 0) {
     throw ServiceError.notFound('No driver with this id exists');
+  }
+};
+
+export const getDriversByTeamId = async (team_id: number): Promise<PublicDriver[]> => {
+  
+  try {
+    const drivers = await prisma.driver.findMany({
+      where: {
+        AND: [
+          { team_id: team_id },
+        ],
+      },
+    });
+  
+    return drivers.map(makeExposedDriver);
+    
+  } catch(error) {
+    throw handleDBError(error);
   }
 };

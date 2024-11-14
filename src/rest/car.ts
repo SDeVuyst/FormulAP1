@@ -1,5 +1,6 @@
 import Router from '@koa/router';
 import * as carService from '../service/car';
+import * as resultService from '../service/result';
 import type { FormulaAppContext, FormulaAppState, KoaContext, KoaRouter } from '../types/koa';
 import type { 
   CreateCarRequest, 
@@ -9,6 +10,7 @@ import type {
   UpdateCarRequest,
   UpdateCarResponse,
 } from '../types/car';
+import type { GetAllResultsResponse } from '../types/result';
 import type { IdParams } from '../types/common';
 import Joi from 'joi';
 import validate from '../core/validation';
@@ -159,6 +161,35 @@ deleteCar.validationScheme = {
   },
 };
 
+/**
+ * @api {get} /api/cars/:id/results Get results by car Id
+ * @apiName GetResultsByCar
+ * @apiGroup Car
+ * 
+ * @apiParam {Int} id Car unique ID (URL parameter).
+ * 
+ * @apiSuccess {Results[]} results List of results.
+ * 
+ * @apiError (404) NotFound No car with this id exists.
+ * @apiError (401) Unauthorized No authorization token provided
+ * @apiError (401) Unauthorized Invalid authorization token provided
+ */
+const getResultsByCarId = async(ctx: KoaContext<GetAllResultsResponse, IdParams>) => {
+
+  await carService.checkCarExists(Number(ctx.params.id));
+
+  const results = await resultService.getResultsByCarId(Number(ctx.params.id));
+  ctx.body = {
+    items: results,
+  };
+};
+
+getResultsByCarId.validationScheme = {
+  params: {
+    id: Joi.number().integer().positive(),
+  },
+};
+
 export default (parent: KoaRouter) => {
   const router = new Router<FormulaAppState, FormulaAppContext>({
     prefix: '/cars',
@@ -199,6 +230,12 @@ export default (parent: KoaRouter) => {
     requireAdmin,
     validate(deleteCar.validationScheme), 
     deleteCar,
+  );
+
+  router.get(
+    '/:id/results',
+    validate(getResultsByCarId.validationScheme),
+    getResultsByCarId,
   );
 
   parent.use(router.routes()).use(router.allowedMethods());

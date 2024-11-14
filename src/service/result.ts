@@ -139,3 +139,14 @@ export const getResultsByDriverId = async (driver_id: number): Promise<Result[]>
     select: RESULT_SELECT,
   });
 };
+
+export const getResultsByCarId = async (car_id: number): Promise<Result[]> => {
+  return await prisma.result.findMany({
+    where: {
+      AND: [
+        { car_id: car_id },
+      ],
+    },
+    select: RESULT_SELECT,
+  });
+};
