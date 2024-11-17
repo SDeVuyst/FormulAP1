@@ -10,13 +10,29 @@ import type { Driver, DriverCreateInput, DriverUpdateInput, PublicDriver } from 
 import type { SessionInfo } from '../types/auth';
 import handleDBError from './_handleDBError';
 
+const DRIVER_SELECT = {
+  id: true,
+  first_name: true,
+  last_name: true,
+  status: true,
+  email: true,
+  password_hash: true,
+  roles: true,
+  team: {
+    select: {
+      id: true,
+      name: true,
+    },
+  },
+} as const;
+
 const makeExposedDriver = ({ id, first_name, last_name, status, email, team}: Driver): PublicDriver => ({
   id,
   first_name,
   last_name,
   status,
   email,
-  team,
+  team: team || undefined,
 });
 
 export const checkAndParseSession = async (
@@ -90,7 +106,10 @@ export const login = async (
 };
 
 export const getAll = async (): Promise<PublicDriver[]> => {
-  const drivers =  await prisma.driver.findMany();
+  const drivers =  await prisma.driver.findMany({
+    select: DRIVER_SELECT,
+  });
+
   return drivers.map(makeExposedDriver);
 };
 
@@ -99,6 +118,7 @@ export const getById = async (id: number): Promise<PublicDriver> => {
     where: {
       id,
     },
+    select: DRIVER_SELECT,
   });
 
   if (!driver) {
@@ -144,6 +164,7 @@ export const updateById = async (
         id,
       },
       data: changes,
+      select: DRIVER_SELECT,
     });
     return makeExposedDriver(driver);
   } catch (error) {
@@ -184,6 +205,7 @@ export const getDriversByTeamId = async (team_id: number): Promise<PublicDriver[
           { team_id: team_id },
         ],
       },
+      select: DRIVER_SELECT,
     });
   
     return drivers.map(makeExposedDriver);

@@ -26,7 +26,7 @@ const data = {
 
   teams: [
     {
-      id: 1,
+      id: 2,
       name: 'RedBull Racing',
       country: 'Austria',
       join_date: new Date(2017, 1, 1, 0, 0),
@@ -39,14 +39,14 @@ const data = {
       model: 'model1',
       weight: 1104.6,
       year: 2014,
-      team_id: 1,
+      team_id: 2,
     },
     {
       id: 2,
       model: 'model2',
       weight: 999.87,
       year: 2018,
-      team_id: 1,
+      team_id: 2,
     },
   ],
 
@@ -76,7 +76,7 @@ const data = {
 const dataToDelete = {
   circuits: [1],
   races: [1],
-  teams: [1],
+  teams: [2],
   cars: [1, 2],
   results: [1, 2],
 };
@@ -145,7 +145,7 @@ describe('Cars', () => {
         weight: 1104.6,
         year: 2014,
         team: {
-          id: 1,
+          id: 2,
           name: 'RedBull Racing',
         },
       });
@@ -304,6 +304,74 @@ describe('Cars', () => {
     });
 
     testAuthHeader(() => request.delete(`${url}/1`));
+
+  });
+
+  describe('GET /api/cars/:id/results', () => {
+
+    beforeAll(async () => {
+      await prisma.circuit.createMany({ data: data.circuits });
+      await prisma.race.createMany({ data: data.races });
+      await prisma.team.createMany({ data: data.teams });
+      await prisma.car.createMany({ data: data.cars });
+      await prisma.result.createMany({ data: data.results });
+    });
+  
+    afterAll(async () => {
+      await prisma.result.deleteMany({
+        where: { id: { in: dataToDelete.results } },
+      });
+      await prisma.car.deleteMany({
+        where: { id: { in: dataToDelete.cars } },
+      });
+      await prisma.team.deleteMany({
+        where: { id: { in: dataToDelete.teams } },
+      });
+      await prisma.race.deleteMany({
+        where: { id: { in: dataToDelete.races } },
+      });
+      await prisma.circuit.deleteMany({
+        where: { id: { in: dataToDelete.circuits } },
+      });
+    }); 
+
+    it('should 200 and return the results of the given car', async () => {
+      const response = await request.get(`${url}/1/results`).set('Authorization', authHeader);
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body.items.length).toBe(2);
+      expect(response.body.items).toEqual([
+        {
+          id: 1,
+          position: 1,
+          points: 25,
+          status: 'FIN',
+          race: { id: 1 },
+          driver: { id: 1 },
+          car: { id: 1},
+        },
+        {
+          id: 2,
+          position: 2,
+          points: 18,
+          status: 'FIN',
+          race: { id: 1 },
+          driver: { id: 2 },
+          car: { id: 1},
+        },
+      ]);
+
+    });
+
+    it('should 400 with invalid car id', async () => {
+      const response = await request.get(`${url}/invalid/results`).set('Authorization', authHeader);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.code).toBe('VALIDATION_FAILED');
+      expect(response.body.details.params).toHaveProperty('id');
+    });
+
+    testAuthHeader(() => request.get(`${url}/1/results`));
 
   });
   

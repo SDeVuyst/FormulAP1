@@ -10,7 +10,7 @@ export interface Driver extends Entity {
   email: string;
   password_hash: string;
   roles: Prisma.JsonValue;
-  team?: Pick<Team, 'id' | 'name'>;
+  team?: Pick<Team, 'id' | 'name'> | null;
 }
 
 export interface DriverCreateInput {

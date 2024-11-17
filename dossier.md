@@ -70,8 +70,8 @@ Driver wordt als user gezien.
 ### Team
 - `GET /api/teams`: alle results ophalen (auth vereisten)
 - `GET /api/teams/:id`: result met een bepaald id ophalen (auth vereisten)
-- `GET /api/teams/:id/drivers`: drivers van een bepaals team ophalen (admin vereist) // TODO test
-- `GET /api/teams/:id/cars`: cars van een bepaals team ophalen (auth vereist) // TODO test
+- `GET /api/teams/:id/drivers`: drivers van een bepaals team ophalen (admin vereist)
+- `GET /api/teams/:id/cars`: cars van een bepaals team ophalen (auth vereist)
 - `POST /api/teams`: een nieuwe result aanmaken (admin vereist)
 - `PUT /api/teams/:id`: een result aanpassen (admin vereist)
 - `DELETE /api/teams/:id`: een result met een bepaald id verwijderen (admin vereist)
@@ -79,7 +79,7 @@ Driver wordt als user gezien.
 ### Car
 - `GET /api/cars`: alle results ophalen (auth vereisten)
 - `GET /api/cars/:id`: result met een bepaald id ophalen (auth vereisten)
-- `GET /api/cars/:id/results`: results van een bepaals team ophalen (auth vereist) // TODO test
+- `GET /api/cars/:id/results`: results van een bepaals team ophalen (auth vereist)
 - `POST /api/cars`: een nieuwe result aanmaken (admin vereist)
 - `PUT /api/cars/:id`: een result aanpassen (admin vereist)
 - `DELETE /api/cars/:id`: een result met een bepaald id verwijderen (admin vereist)

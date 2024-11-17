@@ -12,6 +12,17 @@ export default function withServer(setter: (s: supertest.Agent) => void): void {
   beforeAll(async () => {
     server = await createServer();
 
+    await prisma.team.createMany({
+      data: [
+        {
+          id: 1,
+          name: 'Ferrari',
+          country: 'Italy',
+          join_date: new Date(1972, 1, 1),
+        },
+      ],
+    });
+
     const passwordHash = await hashPassword('12345678');
     await prisma.driver.createMany({
       data: [
@@ -23,6 +34,7 @@ export default function withServer(setter: (s: supertest.Agent) => void): void {
           email: 'lewis.hamilton@hogent.be',
           password_hash: passwordHash,
           roles: JSON.stringify([Role.USER]),
+          team_id: 1,
         },
         {
           id: 2,

@@ -39,12 +39,6 @@ const data ={
 
   teams: [
     {
-      id: 1,
-      name: 'Ferrari',
-      country: 'Italy',
-      join_date: new Date(1997, 1, 1, 0, 0),
-    },
-    {
       id: 2,
       name: 'Red Bull',
       country: 'Austria',
@@ -58,12 +52,30 @@ const data ={
     },
   ],
 
+  cars: [
+    {
+      id: 1,
+      model: 'model1',
+      weight: 1104.6,
+      year: 2014,
+      team_id: 2,
+    },
+    {
+      id: 2,
+      model: 'model2',
+      weight: 999.87,
+      year: 2018,
+      team_id: 2,
+    },
+  ],
+
 };
 
 const dataToDelete = {
   circuits: [1, 2],
   races: [1, 2],
-  teams: [1, 2, 3],
+  teams: [2, 3],
+  cars: [1, 2],
 };
 
 describe('Teams', () => {
@@ -124,7 +136,7 @@ describe('Teams', () => {
         id: 1,
         name: 'Ferrari',
         country: 'Italy',
-        join_date: '1997-01-31T23:00:00.000Z',
+        join_date: '1972-01-31T23:00:00.000Z',
       });
     });
 
@@ -236,7 +248,13 @@ describe('Teams', () => {
     });
 
     it('should 404 with not existing team', async () => {
-      const response = await request.get(`${url}/123`).set('Authorization', adminAuthHeader);
+      const response = await request.put(`${url}/123`)
+        .send({
+          name: 'Ferrari',
+          country: 'CHANGED',
+          join_date: '2021-05-27T13:00:00.000Z',
+        })
+        .set('Authorization', adminAuthHeader);
 
       expect(response.statusCode).toBe(404);
       expect(response.body).toMatchObject({
@@ -247,7 +265,7 @@ describe('Teams', () => {
     });
 
     it('should 400 with invalid team id', async () => {
-      const response = await request.get(`${url}/invalid`).set('Authorization', adminAuthHeader);
+      const response = await request.put(`${url}/invalid`).set('Authorization', adminAuthHeader);
 
       expect(response.statusCode).toBe(400);
       expect(response.body.code).toBe('VALIDATION_FAILED');
@@ -285,7 +303,7 @@ describe('Teams', () => {
     });
 
     it('should 204 and return nothing', async () => {
-      const response = await request.delete(`${url}/1`).set('Authorization', adminAuthHeader);
+      const response = await request.delete(`${url}/2`).set('Authorization', adminAuthHeader);
 
       expect(response.statusCode).toBe(204);
       expect(response.body).toEqual({});
@@ -303,6 +321,117 @@ describe('Teams', () => {
     });
 
     testAuthHeader(() => request.delete(`${url}/1`));
+
+  });
+
+  describe('GET /api/teams/:id/drivers', () => { 
+
+    beforeAll(async () => {
+      await prisma.team.createMany({ data: data.teams });
+    });
+  
+    afterAll(async () => {
+      await prisma.team.deleteMany({ where: { id: { in: dataToDelete.teams } } });
+    });
+
+    it('should 200 and return the drivers of the given team', async () => {
+      const response = await request.get(`${url}/1/drivers`).set('Authorization', adminAuthHeader);
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body.items.length).toBe(1);
+      expect(response.body.items).toEqual([
+        {
+          id: 1,
+          first_name: 'Lewis',
+          last_name: 'Hamilton',
+          status: 'Active',
+          email: 'lewis.hamilton@hogent.be',
+          team: {
+            id: 1,
+            name: 'Ferrari',
+          },
+        },
+      ]);
+
+    });
+
+    it('should 403 when not an admin and not own user id', async () => {
+      const response = await request.get(`${url}/1/drivers`).set('Authorization', authHeader);
+
+      expect(response.statusCode).toBe(403);
+      expect(response.body).toMatchObject({
+        code: 'FORBIDDEN',
+        message: 'You are not allowed to view this part of the application',
+      });
+    });
+
+    it('should 400 with invalid team id', async () => {
+      const response = await request.get(`${url}/invalid/drivers`).set('Authorization', adminAuthHeader);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.code).toBe('VALIDATION_FAILED');
+      expect(response.body.details.params).toHaveProperty('id');
+    });
+
+    testAuthHeader(() => request.get(`${url}/1/drivers`));
+
+  });
+
+  describe('GET /api/teams/:id/cars', () => {
+
+    beforeAll(async () => {
+      await prisma.team.createMany({ data: data.teams });
+      await prisma.car.createMany({ data: data.cars });
+    });
+  
+    afterAll(async () => {
+      await prisma.car.deleteMany({
+        where: { id: { in: dataToDelete.cars } },
+      });
+      await prisma.team.deleteMany({
+        where: { id: { in: dataToDelete.teams } },
+      });
+    }); 
+
+    it('should 200 and return the cars of the given team', async () => {
+      const response = await request.get(`${url}/2/cars`).set('Authorization', authHeader);
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body.items.length).toBe(2);
+      expect(response.body.items).toEqual([
+        {
+          id: 1,
+          model: 'model1',
+          team: { 
+            id: 2,
+            name: 'Red Bull',
+          },
+          weight: 1104.6,
+          year: 2014,
+        },
+        {
+          id: 2,
+          model: 'model2',
+          team: { 
+            id: 2,
+            name: 'Red Bull',
+          },
+          weight: 999.87,
+          year: 2018,
+        },
+      ]);
+
+    });
+
+    it('should 400 with invalid team id', async () => {
+      const response = await request.get(`${url}/invalid/cars`).set('Authorization', authHeader);
+
+      expect(response.statusCode).toBe(400);
+      expect(response.body.code).toBe('VALIDATION_FAILED');
+      expect(response.body.details.params).toHaveProperty('id');
+    });
+
+    testAuthHeader(() => request.get(`${url}/1/cars`));
 
   });
   

@@ -26,7 +26,7 @@ const data = {
 
   teams: [
     {
-      id: 1,
+      id: 2,
       name: 'RedBull Racing',
       country: 'Austria',
       join_date: new Date(2017, 1, 1, 0, 0),
@@ -69,7 +69,7 @@ const data = {
 const dataToDelete = {
   circuits: [1],
   races: [1],
-  teams: [1],
+  teams: [2],
   cars: [1],
   results: [1, 2],
 };
