@@ -1,26 +1,22 @@
 # Dossier
 
-> Duid aan welke vakken je volgt en vermeld voor deze vakken de link naar jouw GitHub repository. In het geval je slechts één vak volgt, verwijder alle inhoud omtrent het andere vak uit dit document.
-> Lees <https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet> om te weten hoe een Markdown-bestand opgemaakt moet worden.
-> Verwijder alle instructies (lijnen die starten met >).
-
 - Student: Silas De Vuyst
 - Studentennummer: 202399688
 - E-mailadres: <mailto:silas.devuyst@student.hogent.be>
-- Demo: <DEMO_LINK_HIER>
+- Demo: <DEMO_LINK_HIER> #TODO
 - GitHub-repository: <https://github.com/HOGENT-frontendweb/frontendweb-2425-SDeVuyst>
 - Web Services:
-  - Online versie: <LINK_ONLINE_VERSIE_HIER>
+  - Online versie: <LINK_ONLINE_VERSIE_HIER> #TODO
 
 ## Logingegevens
 
 ### Lokaal
-
+TODO
 - Gebruikersnaam/e-mailadres:
 - Wachtwoord:
 
 ### Online
-
+TODO
 - Gebruikersnaam/e-mailadres:
 - Wachtwoord:
 
@@ -28,9 +24,7 @@
 
 ## Projectbeschrijving
 
-> Omschrijf hier duidelijk waarover jouw project gaat. Voeg een domeinmodel (of EERD) toe om jouw entiteiten te verduidelijken.
->
-Driver wordt als user gezien.
+Deze api (Formulapi) gaat over de wereld van Formula 1. Hierin kunnen we de drivers terugvinden (deze worden in dit project gezien als users voor authenticatie doeleinden), circuits, races, resultaten van races, teams & auto's. Dit project werd volledig in typescript geschreven. Er wordt gebruik gemaakt van prisma als ORM en Koa voor routing en request handling.
 ![erd](images/erd.svg)
 
 
@@ -86,52 +80,50 @@ Driver wordt als user gezien.
   
 ## Behaalde minimumvereisten
 
-> Duid per vak aan welke minimumvereisten je denkt behaald te hebben
-
 ### Web Services
 
 #### Datalaag
 
-- [ ] voldoende complex en correct (meer dan één tabel (naast de user tabel), tabellen bevatten meerdere kolommen, 2 een-op-veel of veel-op-veel relaties)
-- [ ] één module beheert de connectie + connectie wordt gesloten bij sluiten server
-- [ ] heeft migraties - indien van toepassing
-- [ ] heeft seeds
+- [X] voldoende complex en correct (meer dan één tabel (naast de user tabel), tabellen bevatten meerdere kolommen, 2 een-op-veel of veel-op-veel relaties)
+- [X] één module beheert de connectie + connectie wordt gesloten bij sluiten server
+- [X] heeft migraties - indien van toepassing
+- [X] heeft seeds
 
 #### Repositorylaag
 
-- [ ] definieert één repository per entiteit - indien van toepassing
-- [ ] mapt OO-rijke data naar relationele tabellen en vice versa - indien van toepassing
-- [ ] er worden kindrelaties opgevraagd (m.b.v. JOINs) - indien van toepassing
+- [X] definieert één repository per entiteit - indien van toepassing
+- [X] mapt OO-rijke data naar relationele tabellen en vice versa - indien van toepassing
+- [X] er worden kindrelaties opgevraagd (m.b.v. JOINs) - indien van toepassing
 
 #### Servicelaag met een zekere complexiteit
 
-- [ ] bevat alle domeinlogica
-- [ ] er wordt gerelateerde data uit meerdere tabellen opgevraagd
-- [ ] bevat geen services voor entiteiten die geen zin hebben zonder hun ouder (bv. tussentabellen)
-- [ ] bevat geen SQL-queries of databank-gerelateerde code
+- [X] bevat alle domeinlogica
+- [X] er wordt gerelateerde data uit meerdere tabellen opgevraagd
+- [X] bevat geen services voor entiteiten die geen zin hebben zonder hun ouder (bv. tussentabellen)
+- [X] bevat geen SQL-queries of databank-gerelateerde code
 
 #### REST-laag
 
-- [ ] meerdere routes met invoervalidatie
-- [ ] meerdere entiteiten met alle CRUD-operaties
-- [ ] degelijke foutboodschappen
-- [ ] volgt de conventies van een RESTful API
-- [ ] bevat geen domeinlogica
-- [ ] geen API calls voor entiteiten die geen zin hebben zonder hun ouder (bv. tussentabellen)
-- [ ] degelijke autorisatie/authenticatie op alle routes
+- [X] meerdere routes met invoervalidatie
+- [X] meerdere entiteiten met alle CRUD-operaties
+- [X] degelijke foutboodschappen
+- [X] volgt de conventies van een RESTful API
+- [X] bevat geen domeinlogica
+- [X] geen API calls voor entiteiten die geen zin hebben zonder hun ouder (bv. tussentabellen)
+- [X] degelijke autorisatie/authenticatie op alle routes
 
 #### Algemeen
 
-- [ ] er is een minimum aan logging en configuratie voorzien
-- [ ] een aantal niet-triviale én werkende integratietesten (min. 1 entiteit in REST-laag >= 90% coverage, naast de user testen)
-- [ ] node_modules, .env, productiecredentials... werden niet gepushed op GitHub
-- [ ] minstens één extra technologie die we niet gezien hebben in de les
-- [ ] maakt gebruik van de laatste ES-features (async/await, object destructuring, spread operator...)
-- [ ] de applicatie start zonder problemen op gebruikmakend van de instructies in de README
-- [ ] de API draait online
-- [ ] duidelijke en volledige README.md
-- [ ] er werden voldoende (kleine) commits gemaakt
-- [ ] volledig en tijdig ingediend dossier
+- [X] er is een minimum aan logging en configuratie voorzien
+- [X] een aantal niet-triviale én werkende integratietesten (min. 1 entiteit in REST-laag >= 90% coverage, naast de user testen)
+- [X] node_modules, .env, productiecredentials... werden niet gepushed op GitHub
+- [X] minstens één extra technologie die we niet gezien hebben in de les
+- [X] maakt gebruik van de laatste ES-features (async/await, object destructuring, spread operator...)
+- [X] de applicatie start zonder problemen op gebruikmakend van de instructies in de README
+- [ ] de API draait online #TODO
+- [X] duidelijke en volledige README.md
+- [X] er werden voldoende (kleine) commits gemaakt
+- [X] volledig en tijdig ingediend dossier
 
 ## Projectstructuur
 
@@ -142,6 +134,7 @@ Driver wordt als user gezien.
 ## Extra technologie
 
 1) zxcvbn wordt gebruikt als validator bovenop Joi om de sterkte van wachtwoorden te valideren.
+2) Er wordt [apiDoc](https://apidocjs.com/) gebruikt om de documentatie van deze api te genereren.
 
 ### Web Services
 
@@ -160,9 +153,10 @@ De documentatie van de API routes worden beschreven in de rest-laag, door middel
 
 ### Web Services
 
-> Zijn er gekende bugs?
+Geen gekende bugs.
 
 ## Reflectie
 
 > Wat vond je van dit project? Wat heb je geleerd? Wat zou je anders doen? Wat vond je goed? Wat vond je minder goed?
 > Wat zou je aanpassen aan de cursus? Wat zou je behouden? Wat zou je toevoegen?
+TODO

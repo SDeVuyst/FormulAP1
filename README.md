@@ -29,6 +29,19 @@ Open de .env file en pas de volgende variabelen aan:
   
 Pas ook eventueel <b>localhost:3306</b> aan zodat de databank correct saat ingesteld.
 
+Schakel corepack in
+```shell
+corepack enable
+```
+
+Installeer de dependencies
+```shell
+yarn
+```
+
+Hierna volg je de stappen voor Development of Productie
+
+### Development
 Hierna laden we de databank in via:
 ```shell
 yarn migrate:dev
@@ -41,6 +54,22 @@ Hierna kunnen we het project opstarten via:
 
 ```shell
 yarn start:dev
+```
+
+### Productie
+Run migraties
+```shell
+yarn prisma migrate deploy
+```
+
+Build project
+```shell
+yarn build
+```
+
+Start productie server
+```shell
+node build/src/index.ts
 ```
 
 ## Testen
@@ -66,6 +95,8 @@ Of door:
 ```shell
 yarn test:coverage
 ```
+> De coverage report is te vinden onder '\_\_tests\_\_/coverage/lcov-report/index.html'
+
 
 ### databank schoon maken en herseeden
 1) Databank resetten
