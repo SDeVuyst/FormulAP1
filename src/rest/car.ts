@@ -39,7 +39,6 @@ getAllCars.validationScheme = null;
  * @apiName NewCar
  * @apiGroup Car
  * 
- * @apiParam {Int} id Car's unique ID.
  * @apiBody {String{..255}} model Car model.
  * @apiBody {Float} weight Car weight.
  * @apiBody {Int} year Car year.

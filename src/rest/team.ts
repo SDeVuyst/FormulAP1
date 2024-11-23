@@ -41,7 +41,6 @@ getAllTeams.validationScheme = null;
  * @apiName NewTeam
  * @apiGroup Team
  * 
- * @apiParam {Int} id Team's unique ID.
  * @apiBody {String{..255}} name Team name.
  * @apiBody {String{..255}} country Team country.
  * @apiBody {Date} join_date Join date in the F1 Calendar.
