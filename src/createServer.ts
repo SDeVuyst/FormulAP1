@@ -3,7 +3,10 @@ import { getLogger } from './core/logging';
 import { initializeData, shutdownData } from './data';
 import installRest from './rest';
 import type { FormulaAppContext, FormulaAppState, KoaApplication } from './types/koa';
+import config from 'config';
 import installMiddlewares from './core/installMiddlewares';
+
+const PORT = config.get<number>('port');
 
 export interface Server {
   getApp(): KoaApplication;
@@ -25,10 +28,9 @@ export default async function createServer(): Promise<Server> {
 
     start() {
       return new Promise<void>((resolve) => {
-        app.listen(9000, () => {
-          getLogger().info('🚀 Server listening on http://localhost:9000');
-          resolve();
-        });
+        app.listen(PORT);
+        getLogger().info(`🚀 Server listening on http://localhost:${PORT}`);
+        resolve();
       });
     },
 

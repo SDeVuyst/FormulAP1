@@ -58,5 +58,9 @@
   "prisma": {
     "schema": "src/data/schema.prisma",
     "seed": "tsx ./src/data/seed.ts"
+  },
+  "engines": {
+    "node": "20.6.0",
+    "yarn": "4.4.0"
   }
 }
