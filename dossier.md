@@ -6,21 +6,18 @@
 - Demo: <DEMO_LINK_HIER> #TODO
 - GitHub-repository: <https://github.com/HOGENT-frontendweb/frontendweb-2425-SDeVuyst>
 - Web Services:
-  - Online versie: <LINK_ONLINE_VERSIE_HIER> #TODO
+  - Online versie: <https://frontendweb-2425-sdevuyst.onrender.com>
 
 ## Logingegevens
 
 ### Lokaal
-TODO
-- Gebruikersnaam/e-mailadres:
-- Wachtwoord:
+- Gebruikersnaam/e-mailadres: lewis.hamilton@hogent.be
+- Wachtwoord: 12345678
 
 ### Online
-TODO
-- Gebruikersnaam/e-mailadres:
-- Wachtwoord:
+- Gebruikersnaam/e-mailadres: lewis.hamilton@hogent.be
+- Wachtwoord: 12345678
 
-> Vul eventueel aan met extra accounts voor administrators of andere rollen.
 
 ## Projectbeschrijving
 
@@ -120,7 +117,7 @@ Deze api (Formulapi) gaat over de wereld van Formula 1. Hierin kunnen we de driv
 - [X] minstens één extra technologie die we niet gezien hebben in de les
 - [X] maakt gebruik van de laatste ES-features (async/await, object destructuring, spread operator...)
 - [X] de applicatie start zonder problemen op gebruikmakend van de instructies in de README
-- [ ] de API draait online #TODO
+- [X] de API draait online
 - [X] duidelijke en volledige README.md
 - [X] er werden voldoende (kleine) commits gemaakt
 - [X] volledig en tijdig ingediend dossier
@@ -130,6 +127,7 @@ Deze api (Formulapi) gaat over de wereld van Formula 1. Hierin kunnen we de driv
 ### Web Services
 
 > Hoe heb je jouw applicatie gestructureerd (mappen, design patterns...)?
+TODO
 
 ## Extra technologie
 
@@ -157,6 +155,9 @@ Geen gekende bugs.
 
 ## Reflectie
 
-> Wat vond je van dit project? Wat heb je geleerd? Wat zou je anders doen? Wat vond je goed? Wat vond je minder goed?
-> Wat zou je aanpassen aan de cursus? Wat zou je behouden? Wat zou je toevoegen?
-TODO
+Ik vond dit een leuk project om te maken. Ik vond het fijn dat we zelf keuze hadden over het onderwerp van ons project.
+De feedback verloopt ook vlot, de issues aanmaken op github maakt dit makkelijk. De twee minpunten dat ik zou geven zijn:
+1) Het is redelijk veel copy-pasten van de cursus. Dit is op zich niet zo erg als je begrijpt wat de code doet.
+2) We moeten heel veel refactoren, vooral de tests moeten veel gerefactored worden na er een feature wordt toegevoegd.
+
+Ik zou eventueel de tests-hoofdstukken samen nemen wat later in de cursus. In het algemeen vond ik dit een leuk en interessant vak.

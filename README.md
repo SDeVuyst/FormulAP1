@@ -69,7 +69,7 @@ yarn build
 
 Start productie server
 ```shell
-node build/src/index.ts
+node build/src/index.js
 ```
 
 ## Testen
