@@ -11,11 +11,21 @@
 ## Logingegevens
 
 ### Lokaal
+#### User
 - Gebruikersnaam/e-mailadres: lewis.hamilton@hogent.be
 - Wachtwoord: 12345678
 
+#### Admin
+- Gebruikersnaam/e-mailadres: verstappenm@hogent.be
+- Wachtwoord: 12345678
+
 ### Online
+#### User
 - Gebruikersnaam/e-mailadres: lewis.hamilton@hogent.be
+- Wachtwoord: 12345678
+
+#### Admin
+- Gebruikersnaam/e-mailadres: verstappenm@hogent.be
 - Wachtwoord: 12345678
 
 
@@ -126,8 +136,28 @@ Deze api (Formulapi) gaat over de wereld van Formula 1. Hierin kunnen we de driv
 
 ### Web Services
 
-> Hoe heb je jouw applicatie gestructureerd (mappen, design patterns...)?
-TODO
+De structuur van dit project is hetzelfde als dat van het voorbeeldproject en de cursus.
+We delen het project op in verschillende lagen volgens de gelaagde architectuur
+
+#### data (persistentielaag)
+Deze laag beheert onze data, zoals de verbinding met de databank, het schema, seeds
+
+#### service (domeinlaag)
+Dit beheert al de business logica, ook wel de domeinlaag genoemd.
+
+#### REST (presentatielaag)
+Hier worden de REST-endpoints gedefinieerd, hier ontvangen we de requests.
+
+----
+Hiernaast hebben we nog een paar mappen:
+
+#### types
+Hierin definiëren we de types van de parameters en return waarden in de verschillende lagen, zo hebben we type safety in het project.
+
+### core
+Hierin staan vooral utility-functies
+
+
 
 ## Extra technologie
 
