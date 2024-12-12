@@ -3,7 +3,7 @@
 - Student: Silas De Vuyst
 - Studentennummer: 202399688
 - E-mailadres: <mailto:silas.devuyst@student.hogent.be>
-- Demo: <DEMO_LINK_HIER> #TODO
+- Demo: <https://hogent.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=287480b7-9368-40c4-b295-b24400c731bd>
 - GitHub-repository: <https://github.com/HOGENT-frontendweb/frontendweb-2425-SDeVuyst>
 - Web Services:
   - Online versie: <https://frontendweb-2425-sdevuyst.onrender.com>
@@ -146,16 +146,13 @@ Deze laag beheert onze data, zoals de verbinding met de databank, het schema, se
 Dit beheert al de business logica, ook wel de domeinlaag genoemd.
 
 #### REST (presentatielaag)
-Hier worden de REST-endpoints gedefinieerd, hier ontvangen we de requests.
-
-----
-Hiernaast hebben we nog een paar mappen:
+Hier worden de REST-endpoints gedefinieerd, en ontvangen we de requests.
 
 #### types
 Hierin definiëren we de types van de parameters en return waarden in de verschillende lagen, zo hebben we type safety in het project.
 
 ### core
-Hierin staan vooral utility-functies
+Hierin staan vooral utility-functies, zoals logging, errorhandling & andere middleware.
 
 
 
